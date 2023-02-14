@@ -1,5 +1,5 @@
 NAME = minishell
-SRC = main.c utils.c env.c
+SRC = main.c utils.c env.c free.c
 OBJ = $(SRC:.c=.o)
 
 LIBFT = @libft/Makefile
