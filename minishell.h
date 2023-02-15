@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 14:41:50 by kristori          #+#    #+#             */
-/*   Updated: 2023/02/14 15:32:31 by kristori         ###   ########.fr       */
+/*   Updated: 2023/02/15 15:16:46 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@
 char	**ft_env_cpy(char **envp);
 char	**ft_env_add_var(char **envp, char *str);
 char	**ft_env_remove_var(char **envp, char *str);
-char	*ft_remove_char(char *str, char c);
+void	ft_remove_char(char *str, char c);
+int		ft_check_exists(char **envp, char *str);
+void	ft_print_echo(char **envp, char *str);
 void	ft_free(char **str);
 
 #endif

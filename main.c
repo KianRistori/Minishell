@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 14:28:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/02/14 15:23:35 by kristori         ###   ########.fr       */
+/*   Updated: 2023/02/15 15:16:41 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,8 @@ int main(int argc, char **argv, char **envp)
 				i++;
 			}
 		}
-		if (ft_strcmp(input, "echo") == 0)
-		{
-			break ;
-		}
+		if (ft_strcmp(input_split[0], "echo") == 0)
+			ft_print_echo(envp_cpy, input);
 		i = 0;
 		add_history(input);
 		free(input);
