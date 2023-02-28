@@ -6,7 +6,7 @@
 #    By: kristori <kristori@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/04 12:54:12 by kristori          #+#    #+#              #
-#    Updated: 2023/02/13 15:00:46 by kristori         ###   ########.fr        #
+#    Updated: 2023/02/28 15:22:06 by kristori         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ SRC	= ft_isdigit.c  ft_memset.c   ft_strncmp.c \
 	ft_strnstr.c  ft_calloc.c  ft_strdup.c  ft_strtrim.c \
 	ft_itoa.c  ft_strmapi.c  ft_striteri.c  ft_split.c \
 	ft_putchar_fd.c  ft_putstr_fd.c  ft_putendl_fd.c  ft_putnbr_fd.c \
-	ft_strcmp.c
+	ft_strcmp.c ft_split2.c
 
 OBJ	= $(SRC:.c=.o)
 

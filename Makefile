@@ -1,9 +1,9 @@
 NAME = minishell
-SRC = main.c ft_cmdtrim.c
+SRC = main.c ft_cmdtrim.c utils.c free.c
 OBJ = $(SRC:.c=.o)
 
 LIBFT = @libft/Makefile
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -g -Wall -Wextra -Werror
 LIB = libft/libft.a
 LINKS = -lreadline
 

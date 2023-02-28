@@ -1,44 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/04 14:52:33 by kristori          #+#    #+#             */
-/*   Updated: 2023/02/28 14:53:54 by kristori         ###   ########.fr       */
+/*   Created: 2023/02/28 10:44:38 by kristori          #+#    #+#             */
+/*   Updated: 2023/02/28 10:45:23 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-char	*ft_strjoin(char *s1, char const *s2)
+void	ft_free(char **str)
 {
-	char	*str;
-	size_t	i;
-	size_t	j;
+	int	i;
 
-	if (s1 == NULL)
-	{
-		s1 = malloc(1);
-		s1[0] = '\0';
-	}
-	str = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1));
-	if (!str)
-		return (NULL);
 	i = 0;
-	j = 0;
-	while (s1[i])
+	while (str[i])
 	{
-		str[j++] = s1[i];
+		free(str[i]);
 		i++;
 	}
-	i = 0;
-	while (s2[i])
-	{
-		str[j++] = s2[i];
-		i++;
-	}
-	str[j] = '\0';
-	return (str);
+	free(str);
 }

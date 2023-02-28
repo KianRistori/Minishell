@@ -6,33 +6,11 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/02/24 11:56:30 by kristori         ###   ########.fr       */
+/*   Updated: 2023/02/28 16:21:09 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static char	*ft_strlcpy_quote(const char *src, size_t size, size_t start)
-{
-	char	*dst;
-	size_t	i;
-	int		j;
-
-	j = 0;
-	i = start;
-	dst = (char *)malloc(sizeof(char) * (size - start) + 1);
-	if (size > 0)
-	{
-		while (src[i] && i < (size))
-		{
-			dst[j] = src[i];
-			i++;
-			j++;
-		}
-		dst[j] = '\0';
-	}
-	return (dst);
-}
 
 static int	ft_wordcount(char *str, char set)
 {
@@ -70,26 +48,62 @@ int	ft_pipecount(char **cmd)
 	i = 0;
 	while (cmd[i])
 	{
-		if (ft_strchr(cmd[i], 60) || ft_strchr(cmd[i], 62) || ft_strchr(cmd[i], 124))
+		if (ft_strchr(cmd[i], 60) || ft_strchr(cmd[i], 62)
+			|| ft_strchr(cmd[i], 124))
 			ris++;
 		i++;
 	}
 	return (ris);
 }
 
+static char	*ft_substitute(char *str)
+{
+	static int	flag;
+	int			i;
+	int			j;
+
+	j = 0;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'')
+			flag = !flag;
+		i++;
+	}
+	if (!ft_strchr(str, '$'))
+		return (str);
+	i = 0;
+	while (str[i])
+	{
+		if (flag == 0 && (str[i] == '\'' || str[i] == '\"' || str[i] == ' ' || str[i] == '\0'))
+			i++;
+		str = ft_strjoin(str, getenv(ft_strlcpy_quote(str, i, j)));
+	}
+	j = i;
+	while (str[i])
+		i++;
+	str = ft_strjoin(str, ft_strlcpy_quote(str, i, j));
+	return (str);
+}
+
 static void	ft_search_env(char **cmd)
 {
+	char	**split;
 	int		i;
+	int		j;
 
 	i = 0;
-	while (cmd[i])
+	j = 0;
+	while(cmd[i])
 	{
 		if (ft_strchr(cmd[i], '$'))
 		{
-			if (getenv(ft_strtrim(cmd[i], " $")))
-				cmd[i] = ft_strdup(getenv(ft_strtrim(cmd[i], " $")));
-			else
-				cmd[i] = ft_strdup("");
+			split = ft_split2(cmd[i], '$');
+			while (split[j])
+			{
+				split[j] = ft_substitute(split[j]);
+				j++;
+			}
 		}
 		i++;
 	}
@@ -98,30 +112,43 @@ static void	ft_search_env(char **cmd)
 char	**ft_cmdsubsplit(char **cmd)
 {
 	char	**ris;
-	char	**split;
+	int		flag;
 	int		i;
-	int		k;
 	int		j;
+	int		k;
 
+	flag = 0;
 	i = 0;
-	k = 0;
 	j = 0;
-	ris = (char **)malloc(sizeof(cmd) + (sizeof(char *) * ft_pipecount(cmd)) + 1);
+	k = 0;
+	ris = (char **)malloc(sizeof(char *) * ((ft_countlist(cmd) + (ft_pipecount(cmd) * 2) + 1)));
 	while (cmd[i])
 	{
-		if (ft_strchr(cmd[i], 39) || ft_strchr(cmd[i], 34))
+		while (cmd[i][j])
+		{
+			if (cmd[i][j] == 60 || cmd[i][j] == 62 || cmd[i][j] == 124)
+			{
+				flag = 1;
+				ris[k] = ft_strlcpy_quote(cmd[i], j, 0);
+				k++;
+				ris[k] = ft_strdup((char [2]){cmd[i][j], 0});
+				k++;
+				ris[k] = ft_strlcpy_quote(cmd[i], ft_strlen(cmd[i]), j + 1);
+				k++;
+				break ;
+			}
+			j++;
+		}
+		if (flag == 0)
 		{
 			ris[k] = cmd[i];
 			k++;
 		}
-		else if (ft_strchr(cmd[i], 60) || ft_strchr(cmd[i], 62) || ft_strchr(cmd[i], 124))
-		{
-
-		}
-		j = 0;
 		i++;
+		j = 0;
+		flag = 0;
 	}
-	ris[++k] = 0;
+	ris[k] = 0;
 	return (ris);
 }
 
@@ -138,8 +165,7 @@ char	**ft_cmdtrim(char *str, char set)
 	k = 0;
 	flag[0] = 0;
 	flag[1] = 0;
-	printf("%d\n", ft_wordcount(str, set));
-	ris = (char **)malloc(sizeof(char *) * ft_wordcount(str, set) + 1);
+	ris = (char **)malloc(sizeof(char *) * (ft_wordcount(str, set) + 1));
 	while (str[i] != '\0')
 	{
 		if (flag[0] == 0 && flag[1] == 0 && str[i] == set)
