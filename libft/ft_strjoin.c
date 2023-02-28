@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
+/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 14:52:33 by kristori          #+#    #+#             */
-/*   Updated: 2023/02/28 14:53:54 by kristori         ###   ########.fr       */
+/*   Updated: 2023/02/28 17:48:37 by javellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,6 @@ char	*ft_strjoin(char *s1, char const *s2)
 		i++;
 	}
 	str[j] = '\0';
+	free(s1);
 	return (str);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
+/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:48:47 by kristori          #+#    #+#             */
-/*   Updated: 2023/02/28 16:44:56 by kristori         ###   ########.fr       */
+/*   Updated: 2023/02/28 17:49:13 by javellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,12 @@ static char	*ft_substitute(char *str)
 	static int	flag;
 	int			i;
 	int			j;
+	char		*ris;
 
-	j = 0;
+	j = 1;
 	i = 0;
+	ris = NULL;
+	//printf("i: %d, j: %d\n", i,j);
 	while (str[i])
 	{
 		if (str[i] == '\'')
@@ -28,24 +31,34 @@ static char	*ft_substitute(char *str)
 	}
 	if (!ft_strchr(str, '$'))
 		return (str);
-	i = 0;
+	i = 1;
 	while (str[i])
 	{
-		if (flag == 0 && (str[i] == '\'' || str[i] == '\"' || str[i] == ' ' || str[i] == '\0'))
-			i++;
-		str = ft_strjoin(str, getenv(ft_strlcpy_quote(str, i, j)));
+		// printf("str[i]>: %c\n", str[i]);
+		if (str[i] == '\'' || str[i] == '\"' || str[i] == ' ' || str[i] == '\0')
+			break ;
+		i++;
+		// printf("i>: %d, j>: %d falg: %d\n", i,j, flag);
 	}
+	printf("str 1 = %s\n",ft_strlcpy_quote(str, i, j));
+	if (flag == 0)
+		ris = ft_strjoin(ris, getenv(ft_strlcpy_quote(str, i, j)));
+	else
+		ris = ft_strjoin(ris, ft_strlcpy_quote(str, i, j - 1));
 	j = i;
 	while (str[i])
 		i++;
-	str = ft_strjoin(str, ft_strlcpy_quote(str, i, j));
-	return (str);
+	// printf("i: %d, j: %d", i,j);
+	printf("str 2 = %s\n",ft_strlcpy_quote(str, i, j));
+	ris = ft_strjoin(ris, ft_strlcpy_quote(str, i, j));
+	return (ris);
 }
 
 int	main()
 {
-	char *str = "echo $SHELL 'dfdfd'";
-	printf("str = %s", ft_substitute(str));
+	char *str = "$SHELL'dfdfd'";
+	//printf("i: , j:\n");
+	printf("\nstr = %s\n", ft_substitute(str));
 	// char *prompt = "@minishell ";
 	// char *input;
 	// char *user = getenv("USER");
