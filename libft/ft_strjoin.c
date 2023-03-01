@@ -6,10 +6,11 @@
 /*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 14:52:33 by kristori          #+#    #+#             */
-/*   Updated: 2023/02/28 17:48:37 by javellis         ###   ########.fr       */
+/*   Updated: 2023/03/01 16:06:53 by javellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
 #include "libft.h"
 
 char	*ft_strjoin(char *s1, char const *s2)
@@ -40,6 +41,5 @@ char	*ft_strjoin(char *s1, char const *s2)
 		i++;
 	}
 	str[j] = '\0';
-	free(s1);
 	return (str);
 }
