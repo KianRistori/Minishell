@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:47:49 by kristori          #+#    #+#             */
-/*   Updated: 2023/02/28 10:45:29 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/02 14:13:46 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ typedef struct s_mini
 }		t_mini;
 
 char	*ft_strlcpy_quote(const char *src, size_t size, size_t start);
+char	*ft_strjoin2(char *s1, char const *s2);
+char	*ft_strtrim2(char *s1, char const *set);
 char	**ft_cmdtrim(char *str, char set);
 char	**ft_cmdsubsplit(char **cmd);
 int		ft_pipecount(char **cmd);

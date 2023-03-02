@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cmdtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/01 16:32:52 by javellis         ###   ########.fr       */
+/*   Updated: 2023/03/02 14:34:41 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,47 +58,46 @@ int	ft_pipecount(char **cmd)
 
 static char	*ft_substitute(char *str)
 {
+	char		*ris;
+	char		*tmp;
 	static int	flag;
 	int			i;
 	int			j;
-	char		*ris;
 
 	j = 1;
 	i = 0;
 	ris = NULL;
-	//printf("i: %d, j: %d\n", i,j);
-	// while (str[i])
-	// {
-	// 	if (str[i] == '\'')
-	// 		flag = !flag;
-	// 	i++;
-	// }
 	if (!ft_strchr(str, '$'))
+	{
+		while (str[i])
+		{
+			if (str[i] == '\'')
+				flag = !flag;
+			i++;
+		}
 		return (str);
+	}
 	i = 1;
 	while (str[i])
 	{
-		// printf("str[i]>: %c\n", str[i]);
-		// if (str[i] == '\'')
-		// {
-		// 	printf("flag prima = %d\n",flag);
-		// 	flag = !flag;
-		// 	printf("flag dopo = %d\n",flag);
-		// }
-		//printf("flag dopo = %d\n",flag);
-		if (str[i] == '\'')
-			flag = !flag;
 		if (str[i] == '\'' || str[i] == '\"' || str[i] == ' ' || str[i] == '\0')
 			break ;
+		if (str[i] == '\'')
+			flag = !flag;
 		i++;
-		// printf("i>: %d, j>: %d falg: %d\n", i,j, flag);
 	}
-	//printf("str 1 = %s\n",ft_strlcpy_quote(str, i, j));
-	printf("flag = %d\n", flag);
 	if (flag == 0)
-		ris = ft_strjoin(ris, getenv(ft_strlcpy_quote(str, i, j)));
+	{
+		tmp = ft_strlcpy_quote(str, i, j);
+		ris = ft_strjoin2(ris, getenv(tmp));
+		free(tmp);
+	}
 	else
-		ris = ft_strjoin(ris, ft_strlcpy_quote(str, i, j - 1));
+	{
+		tmp = ft_strlcpy_quote(str, i, j - 1);
+		ris = ft_strjoin2(ris, tmp);
+		free(tmp);
+	}
 	j = i;
 	while (str[i])
 	{
@@ -106,19 +105,34 @@ static char	*ft_substitute(char *str)
 			flag = !flag;
 		i++;
 	}
-	// while (str[i])
-	// 	i++;
-	// printf("i: %d, j: %d", i,j);
-	// printf("str 2 = %s\n",ft_strlcpy_quote(str, i, j));
-	ris = ft_strjoin(ris, ft_strlcpy_quote(str, i, j));
+	tmp = ft_strlcpy_quote(str, i, j);
+	ris = ft_strjoin2(ris, tmp);
+	free(tmp);
 	return (ris);
 }
 
-//"$SHELL  df '$SHELL dfdfd'"
+static void	ft_expand_path(char **cmd)
+{
+	char	*tmp;
+	int		i;
+
+	i = 0;
+	while (cmd[i])
+	{
+		if (ft_strchr(cmd[i], '~'))
+		{
+			tmp = ft_strtrim2(cmd[i], " ~");
+			cmd[i] = ft_strjoin(getenv("HOME"), tmp);
+			free(tmp);
+		}
+		i++;
+	}
+}
 
 static void	ft_search_env(char **cmd)
 {
 	char	**split;
+	char	*tmp;
 	int		i;
 	int		j;
 
@@ -128,19 +142,17 @@ static void	ft_search_env(char **cmd)
 	{
 		if (ft_strchr(cmd[i], '$'))
 		{
-			int k = 0;
 			split = ft_split2(cmd[i], '$');
-			while(split[k])
-			{
-				printf("split[k] = %s\n", split[k]);
-				k++;
-			}
-			cmd[i] = split[0];
+			free(cmd[i]);
+			cmd[i] = ft_substitute(split[0]);
 			while (split[j])
 			{
-				cmd[i] = ft_strjoin(cmd[i], ft_substitute(split[j]));
+				tmp =  ft_substitute(split[j]);
+				cmd[i] = ft_strjoin(cmd[i], tmp);
+				free(tmp);
 				j++;
 			}
+			ft_free(split);
 		}
 		i++;
 	}
@@ -168,7 +180,7 @@ char	**ft_cmdsubsplit(char **cmd)
 				flag = 1;
 				ris[k] = ft_strlcpy_quote(cmd[i], j, 0);
 				k++;
-				ris[k] = ft_strdup((char [2]){cmd[i][j], 0});
+				ris[k] = ft_strdup((char [2]){cmd[i][j], '\0'});
 				k++;
 				ris[k] = ft_strlcpy_quote(cmd[i], ft_strlen(cmd[i]), j + 1);
 				k++;
@@ -178,7 +190,7 @@ char	**ft_cmdsubsplit(char **cmd)
 		}
 		if (flag == 0)
 		{
-			ris[k] = cmd[i];
+			ris[k] = ft_strdup(cmd[i]);
 			k++;
 		}
 		i++;
@@ -224,5 +236,6 @@ char	**ft_cmdtrim(char *str, char set)
 	ris[k] = ft_strlcpy_quote(str, i, j);
 	ris[++k] = 0;
 	ft_search_env(ris);
+	ft_expand_path(ris);
 	return (ris);
 }
