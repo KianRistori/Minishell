@@ -1,5 +1,5 @@
 NAME = minishell
-SRC = main.c ft_cmdtrim.c utils.c free.c
+SRC = main.c ft_cmdtrim.c utils.c free.c parsing.c fill_struct.c
 OBJ = $(SRC:.c=.o)
 
 LIBFT = @libft/Makefile
@@ -29,11 +29,6 @@ $(LIBFT):
 $(OBJ): $(SRC)
 	@echo $(CURSIVE)$(GRAY) "     - Making object files..." $(NONE)
 	@gcc $(FLAGS) -c $(SRC)
-
-exe: all
-	@echo "     - Executing $(NAME)... \n"
-	@./$(NAME)
-	@echo "\n     - Done -"
 
 clean:
 	@echo $(CURSIVE)$(GRAY) "     - Removing object files..." $(NONE)

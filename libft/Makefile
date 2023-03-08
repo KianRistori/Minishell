@@ -6,7 +6,7 @@
 #    By: kristori <kristori@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/04 12:54:12 by kristori          #+#    #+#              #
-#    Updated: 2023/02/28 15:22:06 by kristori         ###   ########.fr        #
+#    Updated: 2023/03/08 15:02:29 by kristori         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ BONUS	= ft_lstnew.c  ft_lstadd_front.c  ft_lstsize.c  ft_lstlast.c \
 
 OBJ_BONUS	= $(BONUS:.c=.o)
 
-all:	$(NAME)
+all:	$(NAME) bonus
 
 $(NAME) : $(SRC)
 	@gcc -Wall -Werror -Wextra -c $(SRC)
