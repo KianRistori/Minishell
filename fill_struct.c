@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 15:00:15 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/08 16:51:37 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/09 16:53:54 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,12 @@ t_mini	*ft_fill_t_mini(char **cmd, char **envp)
 
 	i = 0;
 	ris = (t_mini *)malloc(sizeof(t_mini));
+	ris->infile = 0;
+	ris->outfile = 0;
 	while (cmd[i])
 	{
+		if (ris->full_path == NULL)
+			ris->full_path = ft_path(cmd[i], envp);
 		if (ft_strchr(cmd[i], '<'))
 		{
 			ris->infile = open(cmd[i + 1], O_RDONLY);
@@ -33,14 +37,15 @@ t_mini	*ft_fill_t_mini(char **cmd, char **envp)
 			if (ris->outfile < 0)
 				exit(EXIT_FAILURE);
 		}
+		i++;
 	}
 	i = 0;
-	if (ris->outfile > 0)
-		ris->full_path = ft_path(cmd[2], envp);
-	else
-		ris->full_path = ft_path(cmd[0], envp);
-	if (!ris->full_path)
-		exit(EXIT_FAILURE);
+	// if (ris->outfile > 0)
+	// 	ris->full_path = ft_path(cmd[2], envp);
+	// else
+	// 	ris->full_path = ft_path(cmd[0], envp);
+	// if (!ris->full_path)
+	// 	exit(EXIT_FAILURE);
 	while (cmd[i])
 		i++;
 	ris->full_cmd = (char **)malloc(sizeof(char *) * (i + 1));
@@ -53,37 +58,75 @@ t_mini	*ft_fill_t_mini(char **cmd, char **envp)
 	return (ris);
 }
 
-// static char	**ft_cmd_copy(char **cmd, int start, int end)
-// {
-// 	char	**ris;
-// 	int		i;
+static char	**ft_cmd_copy(char **cmd, int start, int end)
+{
+	char	**ris;
+	int		i;
 
-// 	ris = (char **)malloc(sizeof(char *) * (end - start + 1));
-// 	while (start < end)
-// 	{
-// 		ris[i] = ft_strdup(cmd[start]);
-// 		i++;
-// 		start++;
-// 	}
-// 	return (ris);
+	i = 0;
+	ris = (char **)malloc(sizeof(char *) * (end - start + 1));
+	while (start < end)
+	{
+		ris[i] = ft_strdup(cmd[start]);
+		i++;
+		start++;
+	}
+	ris[i] = 0;
+	return (ris);
+}
 
-// }
+static void	ft_add_last(t_list **head, t_mini *newData)
+{
+	t_list	*new_node;
+	t_list	*last_node;
 
-// void	ft_fill_struct(t_list *begin, char **cmd, char **envp)
-// {
-// 	int	i;
-// 	int	j;
+	new_node = (t_list *)malloc(sizeof(t_list));
+	if (!new_node)
+		return ;
+	new_node->content = newData;
+	new_node->next = NULL;
+	if (*head == NULL)
+		*head = new_node;
+	else
+	{
+		last_node = *head;
+		while (last_node->next != NULL)
+		{
+			last_node = last_node->next;
+		}
+		last_node->next = new_node;
+	}
+}
 
-// 	i = 0;
-// 	j = 0;
-// 	while (cmd[i])
-// 	{
-// 		while (cmd[j])
-// 		{
-// 			if (ft_strchr(cmd[j], '|'))
-// 				begin = ft_lstnew(ft_cmd_copy(cmd, i, j));
-// 			j++;
-// 		}
-// 		i = j;
-// 	}
-// }
+void	ft_fill_struct(t_list **begin, char **cmd, char **envp)
+{
+	t_mini	*mini;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	while (cmd[i])
+	{
+		while (cmd[j])
+		{
+			if (ft_strchr(cmd[j], '|'))
+			{
+				mini = ft_fill_t_mini(ft_cmd_copy(cmd, i, j), envp);
+				ft_add_last(begin, mini);
+				j++;
+				break;
+			}
+			else if (!cmd[j + 1])
+			{
+				mini = ft_fill_t_mini(ft_cmd_copy(cmd, i, j + 1), envp);
+				ft_add_last(begin, mini);
+				j++;
+				break;
+			}
+			j++;
+		}
+		i = j;
+	}
+	printf("end\n");
+}

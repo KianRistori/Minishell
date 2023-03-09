@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/02 14:34:41 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/09 16:29:19 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,5 +237,41 @@ char	**ft_cmdtrim(char *str, char set)
 	ris[++k] = 0;
 	ft_search_env(ris);
 	ft_expand_path(ris);
+	return (ris);
+}
+
+char	**ft_strtrim_all(char **cmd)
+{
+	char	**ris;
+	int		i;
+	int		k;
+
+	i = 0;
+	k = 0;
+	while (cmd[i])
+	{
+		if (cmd[i][0] == ' ' && cmd[i][1] == 0)
+			i++;
+		else
+		{
+			k++;
+			i++;
+		}
+	}
+	ris = (char **)malloc(sizeof(char *) * (k + 1));
+	i = 0;
+	k = 0;
+	while (cmd[i])
+	{
+		if (cmd[i][0] == ' ' && cmd[i][1] == 0)
+			i++;
+		else
+		{
+			ris[k] = ft_strdup(cmd[i]);
+			k++;
+			i++;
+		}
+	}
+	ft_free(cmd);
 	return (ris);
 }
