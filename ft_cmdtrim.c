@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/09 16:29:19 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/13 16:46:28 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,19 @@ int	ft_pipecount(char **cmd)
 {
 	int	ris;
 	int	i;
-
+	int	index;
 	ris = 0;
 	i = 0;
 	while (cmd[i])
 	{
-		if (ft_strchr(cmd[i], 60) || ft_strchr(cmd[i], 62)
-			|| ft_strchr(cmd[i], 124))
+		index = ft_strchr_index(cmd[i], 60);
+		if (index == -1)
+			index = ft_strchr_index(cmd[i], 62);
+		if (index == -1)
+			index = ft_strchr_index(cmd[i], 124);
+		if (index != -1 && (cmd[i][index + 1] != '\0' && index - 1 > 0))
+			ris += 2;
+		else if (index != -1 && (cmd[i][index + 1] != '\0' || index - 1 > 0))
 			ris++;
 		i++;
 	}
@@ -170,20 +176,28 @@ char	**ft_cmdsubsplit(char **cmd)
 	i = 0;
 	j = 0;
 	k = 0;
-	ris = (char **)malloc(sizeof(char *) * ((ft_countlist(cmd) + (ft_pipecount(cmd) * 2) + 1)));
+	printf("countlist: %d, pipecount: %d\n", ft_countlist(cmd), ft_pipecount(cmd));
+	ris = (char **)malloc(sizeof(char *) * ((ft_countlist(cmd) + ft_pipecount(cmd) + 1)));
 	while (cmd[i])
 	{
 		while (cmd[i][j])
 		{
 			if (cmd[i][j] == 60 || cmd[i][j] == 62 || cmd[i][j] == 124)
 			{
+
 				flag = 1;
-				ris[k] = ft_strlcpy_quote(cmd[i], j, 0);
-				k++;
+				if (cmd[i][j - 1] != 0 && cmd[i][j - 1] != ' ')
+				{
+					ris[k] = ft_strlcpy_quote(cmd[i], j, 0);
+					k++;
+				}
 				ris[k] = ft_strdup((char [2]){cmd[i][j], '\0'});
 				k++;
-				ris[k] = ft_strlcpy_quote(cmd[i], ft_strlen(cmd[i]), j + 1);
-				k++;
+				if (cmd[i][j + 1] != 0)
+				{
+					ris[k] = ft_strlcpy_quote(cmd[i], ft_strlen(cmd[i]), j + 1);
+					k++;
+				}
 				break ;
 			}
 			j++;
@@ -252,6 +266,8 @@ char	**ft_strtrim_all(char **cmd)
 	{
 		if (cmd[i][0] == ' ' && cmd[i][1] == 0)
 			i++;
+		else if (cmd[i][0] == 0)
+			i++;
 		else
 		{
 			k++;
@@ -265,6 +281,8 @@ char	**ft_strtrim_all(char **cmd)
 	{
 		if (cmd[i][0] == ' ' && cmd[i][1] == 0)
 			i++;
+		else if (cmd[i][0] == 0)
+			i++;
 		else
 		{
 			ris[k] = ft_strdup(cmd[i]);
@@ -272,6 +290,6 @@ char	**ft_strtrim_all(char **cmd)
 			i++;
 		}
 	}
-	ft_free(cmd);
+	ris[i] = 0;
 	return (ris);
 }

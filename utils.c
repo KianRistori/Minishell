@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 12:02:42 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/02 14:02:24 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/13 15:07:22 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,4 +97,21 @@ int		ft_countlist(char **str)
 	while (str[i])
 		i++;
 	return (i);
+}
+
+
+int	ft_strchr_index(const char *s, int c)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] == (char)c)
+			return (i);
+		i++;
+	}
+	if (s[i] == (char)c)
+		return (i);
+	return (-1);
 }

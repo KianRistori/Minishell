@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:47:49 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/09 16:23:23 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/13 15:07:32 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,5 +50,6 @@ void	ft_fill_struct(t_list **begin, char **cmd, char **envp);
 int		ft_pipecount(char **cmd);
 int		ft_countlist(char **str);
 void	ft_free(char **str);
+int		ft_strchr_index(const char *s, int c);
 
 #endif
