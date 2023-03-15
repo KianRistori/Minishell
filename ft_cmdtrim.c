@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/13 16:46:28 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/15 10:40:00 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,6 @@ char	**ft_cmdsubsplit(char **cmd)
 	i = 0;
 	j = 0;
 	k = 0;
-	printf("countlist: %d, pipecount: %d\n", ft_countlist(cmd), ft_pipecount(cmd));
 	ris = (char **)malloc(sizeof(char *) * ((ft_countlist(cmd) + ft_pipecount(cmd) + 1)));
 	while (cmd[i])
 	{
@@ -186,10 +185,13 @@ char	**ft_cmdsubsplit(char **cmd)
 			{
 
 				flag = 1;
-				if (cmd[i][j - 1] != 0 && cmd[i][j - 1] != ' ')
+				if (j - 1 != -1)
 				{
-					ris[k] = ft_strlcpy_quote(cmd[i], j, 0);
-					k++;
+					if (cmd[i][j - 1] != 0 && cmd[i][j - 1] != ' ')
+					{
+						ris[k] = ft_strlcpy_quote(cmd[i], j, 0);
+						k++;
+					}
 				}
 				ris[k] = ft_strdup((char [2]){cmd[i][j], '\0'});
 				k++;
@@ -254,42 +256,16 @@ char	**ft_cmdtrim(char *str, char set)
 	return (ris);
 }
 
-char	**ft_strtrim_all(char **cmd)
+void	ft_strtrim_all(char **cmd)
 {
-	char	**ris;
-	int		i;
-	int		k;
+	int	i;
 
 	i = 0;
-	k = 0;
 	while (cmd[i])
 	{
-		if (cmd[i][0] == ' ' && cmd[i][1] == 0)
-			i++;
-		else if (cmd[i][0] == 0)
-			i++;
-		else
-		{
-			k++;
-			i++;
-		}
+		cmd[i] = ft_strtrim2(cmd[i], " ");
+		cmd[i] = ft_strtrim2(cmd[i], "\'");
+		cmd[i] = ft_strtrim2(cmd[i], "\"");
+		i++;
 	}
-	ris = (char **)malloc(sizeof(char *) * (k + 1));
-	i = 0;
-	k = 0;
-	while (cmd[i])
-	{
-		if (cmd[i][0] == ' ' && cmd[i][1] == 0)
-			i++;
-		else if (cmd[i][0] == 0)
-			i++;
-		else
-		{
-			ris[k] = ft_strdup(cmd[i]);
-			k++;
-			i++;
-		}
-	}
-	ris[i] = 0;
-	return (ris);
 }

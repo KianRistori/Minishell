@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 15:00:15 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/09 16:53:54 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/15 11:31:47 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ t_mini	*ft_fill_t_mini(char **cmd, char **envp)
 	ris = (t_mini *)malloc(sizeof(t_mini));
 	ris->infile = 0;
 	ris->outfile = 0;
+	ris->full_cmd = NULL;
+	ris->full_path = NULL;
 	while (cmd[i])
 	{
 		if (ris->full_path == NULL)
@@ -52,9 +54,10 @@ t_mini	*ft_fill_t_mini(char **cmd, char **envp)
 	i = 0;
 	while (cmd[i])
 	{
-		ris->full_cmd[i] = cmd[i];
+		ris->full_cmd[i] = ft_strdup(cmd[i]);
 		i++;
 	}
+	ris->full_cmd[i] = 0;
 	return (ris);
 }
 
@@ -100,6 +103,7 @@ static void	ft_add_last(t_list **head, t_mini *newData)
 
 void	ft_fill_struct(t_list **begin, char **cmd, char **envp)
 {
+	char	**tmp;
 	t_mini	*mini;
 	int		i;
 	int		j;
@@ -112,15 +116,19 @@ void	ft_fill_struct(t_list **begin, char **cmd, char **envp)
 		{
 			if (ft_strchr(cmd[j], '|'))
 			{
-				mini = ft_fill_t_mini(ft_cmd_copy(cmd, i, j), envp);
+				tmp = ft_cmd_copy(cmd, i, j);
+				mini = ft_fill_t_mini(tmp, envp);
 				ft_add_last(begin, mini);
+				ft_free(tmp);
 				j++;
 				break;
 			}
 			else if (!cmd[j + 1])
 			{
-				mini = ft_fill_t_mini(ft_cmd_copy(cmd, i, j + 1), envp);
+				tmp = ft_cmd_copy(cmd, i, j + 1);
+				mini = ft_fill_t_mini(tmp, envp);
 				ft_add_last(begin, mini);
+				ft_free(tmp);
 				j++;
 				break;
 			}
@@ -128,5 +136,4 @@ void	ft_fill_struct(t_list **begin, char **cmd, char **envp)
 		}
 		i = j;
 	}
-	printf("end\n");
 }

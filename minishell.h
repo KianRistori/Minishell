@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:47:49 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/13 15:07:32 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/15 12:32:47 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,15 @@ char	*ft_strjoin2(char *s1, char const *s2);
 char	*ft_strtrim2(char *s1, char const *set);
 char	**ft_cmdtrim(char *str, char set);
 char	**ft_cmdsubsplit(char **cmd);
-char	**ft_strtrim_all(char **cmd);
+void	ft_strtrim_all(char **cmd);
 char	**ft_get_paths(char **envp);
 char	*ft_path(char *cmd, char **envp);
 void	ft_fill_struct(t_list **begin, char **cmd, char **envp);
 int		ft_pipecount(char **cmd);
 int		ft_countlist(char **str);
 void	ft_free(char **str);
+void	ft_free_list(t_list *list);
 int		ft_strchr_index(const char *s, int c);
+void	ft_execute(t_prompt *prompt);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:48:47 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/13 16:46:59 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/15 12:37:03 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,31 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	// t_list	*list;
-	// list = NULL;
+	t_prompt	*prompt;
+	t_list		*list;
+	list = NULL;
 	(void)argc;
 	(void)argv;
-	(void)envp;
-	char *prompt = "@minishell ";
+	// (void)envp;
+	prompt = (t_prompt *)malloc(sizeof(t_prompt));
+	char *shell = "@minishell ";
 	char *input;
 	char *user = getenv("USER");
-	char *shell_prompt = ft_strjoin(user, prompt);
+	char *shell_prompt = ft_strjoin(user, shell);
 	input = readline(shell_prompt);
 	char **tmp = ft_cmdtrim(input, ' ');
 	char **ris = ft_cmdsubsplit(tmp);
-	// ft_fill_struct(&list, ris, envp);
-	int i = 0;
-	while (ris[i])
-	{
-		printf("ris[%d]: %s\n", i, ris[i]);
-		i++;
-	}
+	ft_strtrim_all(ris);
+	ft_fill_struct(&list, ris, envp);
+	prompt->cmds = list;
+	prompt->envp = envp;
+	ft_execute(prompt);
+	// int i = 0;
+	// while (ris[i])
+	// {
+	// 	printf("ris[%d]: %s\n", i, ris[i]);
+	// 	i++;
+	// }
 	// while (list != NULL)
 	// {
 	// 	printf("scrive\n");
@@ -47,11 +53,24 @@ int	main(int argc, char **argv, char **envp)
 	// 	i = 0;
 	// 	list = list->next;
 	// }
+
+
+
+
+
+
+
+
+
 	free(shell_prompt);
 	free(input);
 	ft_free(tmp);
 	ft_free(ris);
+	ft_free_list(list);
 	return 0;
 }
 
 //<Makefile cat| echo "$PWD 'hola'" ~/src | 'tr' -d / >outfile
+
+
+//controllare quella cosa
