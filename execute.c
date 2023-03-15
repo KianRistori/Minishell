@@ -6,43 +6,110 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 12:18:24 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/15 12:46:07 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/15 16:52:45 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	ft_child_one(t_prompt *prompt, int *pipefd)
+static void	ft_child_process(t_prompt *prompt)
 {
-	dup2(pipefd[1], STDOUT_FILENO);
-	close(pipefd[1]);
-	execve(((t_mini *)prompt->cmds->content)->full_path, ((t_mini *)prompt->cmds->content)->full_cmd, prompt->envp);
+	pid_t	pid;
+	int		fd[2];
+
+	if (pipe(fd) == -1)
+		printf("error\n");
+	pid = fork();
+	if (pid == -1)
+		printf("error\n");
+	if (pid == 0)
+	{
+		close(fd[0]);
+		dup2(fd[1], STDOUT_FILENO);
+		execve(((t_mini *)prompt->cmds->content)->full_path, ((t_mini *)prompt->cmds->content)->full_cmd, prompt->envp);
+	}
+	else
+	{
+		close(fd[1]);
+		dup2(fd[0], STDIN_FILENO);
+		waitpid(pid, NULL, 0);
+	}
 }
 
-static void	ft_child_two(t_prompt *prompt, int *pipefd)
+static char	**ft_remove_char(char **cmd)
 {
-	dup2(pipefd[0], STDIN_FILENO);
-	close(pipefd[1]);
-	execve(((t_mini *)prompt->cmds->next->content)->full_path, ((t_mini *)prompt->cmds->next->content)->full_cmd, prompt->envp);
+	char	**ris;
+	int	i;
+	int	k;
+
+	i = 0;
+	k = 0;
+	while (cmd[i])
+	{
+		if (!ft_strchr(cmd[i], '>') && !ft_strchr(cmd[i], '<'))
+			k++;
+		i++;
+	}
+	ris = (char **)malloc(sizeof(char *) * (k + 1));
+	i = 0;
+	k = 0;
+	while (cmd[i])
+	{
+		if (!ft_strchr(cmd[i], '>') && !ft_strchr(cmd[i], '<'))
+		{
+			ris[k] = ft_strdup(cmd[i]);
+			k++;
+		}
+		i++;
+	}
+	ft_free(cmd);
+	ris[k] = 0;
+	return (ris);
 }
 
 void	ft_execute(t_prompt *prompt)
 {
-	if (ft_lstsize(prompt->cmds) == 1)
-	{
-		if (execve(((t_mini *)prompt->cmds->content)->full_path, ((t_mini *)prompt->cmds->content)->full_cmd, prompt->envp) == -1)
-			printf("error\n");
-	}
-	else if (ft_lstsize(prompt->cmds) == 2)
-	{
-		int	pipefd[2];
+	t_list *list;
+	int in_file;
+	int out_file;
 
-		if (pipe(pipefd) < 0)
-			perror("Error");
-		prompt->pid = fork();
-		if (!prompt->pid)
-			ft_child_one(prompt, pipefd);
-		else
-			ft_child_two(prompt, pipefd);
+	list = prompt->cmds;
+	in_file = 0;
+	out_file = 0;
+	while (prompt->cmds != NULL)
+	{
+		if (((t_mini *)prompt->cmds->content)->infile > 0)
+			in_file = ((t_mini *)prompt->cmds->content)->infile;
+		if (((t_mini *)prompt->cmds->content)->outfile > 0)
+			out_file = ((t_mini *)prompt->cmds->content)->outfile;
+		((t_mini *)prompt->cmds->content)->full_cmd = ft_remove_char(((t_mini *)prompt->cmds->content)->full_cmd);
+		prompt->cmds = prompt->cmds->next;
+	}
+	prompt->cmds = list;
+	// while (prompt->cmds != NULL)
+	// {
+	// 	int	i = 0;
+	// 	while (((t_mini *)prompt->cmds->content)->full_cmd[i])
+	// 	{
+	// 		printf("list %s\n", ((t_mini *)prompt->cmds->content)->full_cmd[i]);
+	// 		i++;
+	// 	}
+	// 	prompt->cmds = prompt->cmds->next;
+	// }
+	int k = ft_lstsize(prompt->cmds);
+	int i = 0;
+	if (in_file > 0)
+		dup2(in_file, STDIN_FILENO);
+	printf("in_file: %d\n", in_file);
+	while (i < k)
+	{
+		ft_child_process(prompt);
+		prompt->cmds = prompt->cmds->next;
+		i++;
+	}
+	if (out_file > 0)
+	{
+		dup2(out_file, STDOUT_FILENO);
+		execve(((t_mini *)prompt->cmds->content)->full_path, ((t_mini *)prompt->cmds->content)->full_cmd, prompt->envp);
 	}
 }

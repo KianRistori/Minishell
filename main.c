@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:48:47 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/15 12:37:03 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/15 16:32:42 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	main(int argc, char **argv, char **envp)
 	list = NULL;
 	(void)argc;
 	(void)argv;
-	// (void)envp;
+
 	prompt = (t_prompt *)malloc(sizeof(t_prompt));
 	char *shell = "@minishell ";
 	char *input;
@@ -41,7 +41,6 @@ int	main(int argc, char **argv, char **envp)
 	// }
 	// while (list != NULL)
 	// {
-	// 	printf("scrive\n");
 	// 	printf("out: %d\n", ((t_mini *)list->content)->outfile);
 	// 	printf("in: %d\n", ((t_mini *)list->content)->infile);
 	// 	printf("path: %s\n", ((t_mini *)list->content)->full_path);
@@ -53,12 +52,6 @@ int	main(int argc, char **argv, char **envp)
 	// 	i = 0;
 	// 	list = list->next;
 	// }
-
-
-
-
-
-
 
 
 
