@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:47:49 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/16 12:09:52 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/16 15:47:20 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_mini
 	int		infile;
 	int		outfile;
 	char	*built_in;
+	char	*here_doc;
 }		t_mini;
 
 char	*ft_strlcpy_quote(const char *src, size_t size, size_t start);
@@ -54,5 +55,6 @@ void	ft_free(char **str);
 void	ft_free_list(t_list *list);
 int		ft_strchr_index(const char *s, int c);
 void	ft_execute(t_prompt *prompt);
+int		get_next_line(char **line);
 
 #endif

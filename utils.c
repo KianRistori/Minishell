@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 12:02:42 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/13 15:07:22 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/16 15:47:07 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,4 +114,31 @@ int	ft_strchr_index(const char *s, int c)
 	if (s[i] == (char)c)
 		return (i);
 	return (-1);
+}
+
+int	get_next_line(char **line)
+{
+	char	*buffer;
+	char	c;
+	int		i;
+	int		r;
+
+	i = 0;
+	r = 0;
+	buffer = (char *)malloc(10000);
+	if (!buffer)
+		return (0);
+	r = read(0, &c, 1);
+	while (r && c != '\n' && c != '\0')
+	{
+		if (c != '\n' && c != '\0')
+			buffer[i] = c;
+		i++;
+		r = read(0, &c, 1);
+	}
+	buffer[i] = '\n';
+	buffer[i + 1] = '\0';
+	*line = buffer;
+	free(buffer);
+	return (r);
 }

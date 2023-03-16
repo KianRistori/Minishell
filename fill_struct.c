@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 15:00:15 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/16 12:12:48 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/16 16:13:48 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ t_mini	*ft_fill_t_mini(char **cmd, char **envp, char **built_in)
 	ris->outfile = 0;
 	ris->full_cmd = NULL;
 	ris->full_path = NULL;
+	ris->here_doc = NULL;
 	while (cmd[i])
 	{
 		j = 0;
@@ -35,13 +36,25 @@ t_mini	*ft_fill_t_mini(char **cmd, char **envp, char **built_in)
 		}
 		if (ris->full_path == NULL)
 			ris->full_path = ft_path(cmd[i], envp);
-		if (ft_strchr(cmd[i], '<'))
+		if (ft_strchr(cmd[i], '<') && ft_strchr(cmd[i + 1], '<'))
+		{
+			ris->here_doc = ft_strdup(cmd[i + 2]);
+			i++;
+		}
+		else if (ft_strchr(cmd[i], '<'))
 		{
 			ris->infile = open(cmd[i + 1], O_RDONLY);
 			if (ris->infile < 0)
 				exit(EXIT_FAILURE);
 		}
-		if (ft_strchr(cmd[i], '>'))
+		if (ft_strchr(cmd[i], '>') && ft_strchr(cmd[i + 1], '>'))
+		{
+			ris->outfile = open(cmd[i + 2], O_WRONLY | O_APPEND | O_CREAT , 0644);
+			if (ris->outfile < 0)
+				exit(EXIT_FAILURE);
+			i++;
+		}
+		else if (ft_strchr(cmd[i], '>'))
 		{
 			ris->outfile = open(cmd[i + 1], O_CREAT | O_RDWR | O_TRUNC, 0644);
 			if (ris->outfile < 0)
