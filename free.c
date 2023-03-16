@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 10:44:38 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/15 11:30:39 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/16 12:13:13 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	ft_free_list(t_list *list)
 		tmp = list;
 		ft_free(((t_mini *)list->content)->full_cmd);
 		free(((t_mini *)list->content)->full_path);
+		free(((t_mini *)list->content)->built_in);
 		free(list->content);
 		list = list->next;
 		free(tmp);

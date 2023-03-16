@@ -6,13 +6,13 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 12:18:24 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/15 16:52:45 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/16 12:22:58 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	ft_child_process(t_prompt *prompt)
+static void	ft_process(t_prompt *prompt)
 {
 	pid_t	pid;
 	int		fd[2];
@@ -34,6 +34,7 @@ static void	ft_child_process(t_prompt *prompt)
 		dup2(fd[0], STDIN_FILENO);
 		waitpid(pid, NULL, 0);
 	}
+
 }
 
 static char	**ft_remove_char(char **cmd)
@@ -48,6 +49,8 @@ static char	**ft_remove_char(char **cmd)
 	{
 		if (!ft_strchr(cmd[i], '>') && !ft_strchr(cmd[i], '<'))
 			k++;
+		else
+			i++;
 		i++;
 	}
 	ris = (char **)malloc(sizeof(char *) * (k + 1));
@@ -60,6 +63,8 @@ static char	**ft_remove_char(char **cmd)
 			ris[k] = ft_strdup(cmd[i]);
 			k++;
 		}
+		else
+			i++;
 		i++;
 	}
 	ft_free(cmd);
@@ -86,30 +91,20 @@ void	ft_execute(t_prompt *prompt)
 		prompt->cmds = prompt->cmds->next;
 	}
 	prompt->cmds = list;
-	// while (prompt->cmds != NULL)
-	// {
-	// 	int	i = 0;
-	// 	while (((t_mini *)prompt->cmds->content)->full_cmd[i])
-	// 	{
-	// 		printf("list %s\n", ((t_mini *)prompt->cmds->content)->full_cmd[i]);
-	// 		i++;
-	// 	}
-	// 	prompt->cmds = prompt->cmds->next;
-	// }
-	int k = ft_lstsize(prompt->cmds);
-	int i = 0;
 	if (in_file > 0)
 		dup2(in_file, STDIN_FILENO);
-	printf("in_file: %d\n", in_file);
-	while (i < k)
+	int k = ft_lstsize(prompt->cmds);
+	int i = 0;
+	if (k > 1)
 	{
-		ft_child_process(prompt);
-		prompt->cmds = prompt->cmds->next;
-		i++;
+		while (i < k - 1)
+		{
+			ft_process(prompt);
+			i++;
+			prompt->cmds = prompt->cmds->next;
+		}
 	}
 	if (out_file > 0)
-	{
 		dup2(out_file, STDOUT_FILENO);
-		execve(((t_mini *)prompt->cmds->content)->full_path, ((t_mini *)prompt->cmds->content)->full_cmd, prompt->envp);
-	}
+	execve(((t_mini *)prompt->cmds->content)->full_path, ((t_mini *)prompt->cmds->content)->full_cmd, prompt->envp);
 }

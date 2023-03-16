@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:47:49 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/15 14:50:50 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/16 12:09:52 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef struct s_mini
 	char	*full_path;
 	int		infile;
 	int		outfile;
+	char	*built_in;
 }		t_mini;
 
 char	*ft_strlcpy_quote(const char *src, size_t size, size_t start);
