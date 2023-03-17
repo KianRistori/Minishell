@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 12:18:24 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/16 16:19:24 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/17 12:09:53 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ static char	**ft_remove_char(char **cmd)
 		else
 		{
 			if (ft_strchr(cmd[i], '>') && ft_strchr(cmd[i + 1], '>'))
-				i+=2;
+				i++;
 			if (ft_strchr(cmd[i], '<') && ft_strchr(cmd[i + 1], '<'))
 				i++;
 			i++;
@@ -99,7 +99,7 @@ static char	**ft_remove_char(char **cmd)
 		else
 		{
 			if (ft_strchr(cmd[i], '>') && ft_strchr(cmd[i + 1], '>'))
-				i+=2;
+				i++;
 			if (ft_strchr(cmd[i], '<') && ft_strchr(cmd[i + 1], '<'))
 				i++;
 			i++;

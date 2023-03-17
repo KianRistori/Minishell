@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 12:02:42 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/16 15:47:07 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/17 10:58:47 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ int	get_next_line(char **line)
 	}
 	buffer[i] = '\n';
 	buffer[i + 1] = '\0';
-	*line = buffer;
+	*line = ft_strdup(buffer);
 	free(buffer);
 	return (r);
 }
