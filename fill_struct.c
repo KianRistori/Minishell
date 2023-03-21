@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 15:00:15 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/16 16:13:48 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/21 14:35:39 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ t_mini	*ft_fill_t_mini(char **cmd, char **envp, char **built_in)
 	ris->full_cmd = NULL;
 	ris->full_path = NULL;
 	ris->here_doc = NULL;
+	ris->built_in = NULL;
 	while (cmd[i])
 	{
 		j = 0;

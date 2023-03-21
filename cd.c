@@ -1,43 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/28 10:44:38 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/20 17:02:11 by kristori         ###   ########.fr       */
+/*   Created: 2023/03/21 11:45:22 by kristori          #+#    #+#             */
+/*   Updated: 2023/03/21 12:18:29 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_free(char **str)
+void	ft_cd(t_prompt *prompt)
 {
-	int	i;
-
-	i = 0;
-	while (str[i])
+	if (chdir(((t_mini *)prompt->cmds->content)->full_cmd[1]) != 0)
+		return ;
+	if (ft_strcmp(((t_mini *)prompt->cmds->content)->full_cmd[1], "..") != 0)
 	{
-		free(str[i]);
-		i++;
-	}
-	free(str);
-}
-
-void	ft_free_list(t_list *list)
-{
-	t_list	*tmp;
-
-	while (list != NULL)
-	{
-		tmp = list;
-		ft_free(((t_mini *)list->content)->full_cmd);
-		free(((t_mini *)list->content)->full_path);
-		free(((t_mini *)list->content)->built_in);
-		free(((t_mini *)list->content)->here_doc);
-		free(list->content);
-		list = list->next;
-		free(tmp);
+		char *buf=(char *)malloc(100*sizeof(char));
+		getcwd(buf, 100);
+		char *path = ft_strjoin(buf, "/");
+		path = ft_strjoin(path, ((t_mini *)prompt->cmds->content)->full_cmd[1]);
+		chdir(path);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:47:49 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/16 15:47:20 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/21 14:15:48 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,5 +56,14 @@ void	ft_free_list(t_list *list);
 int		ft_strchr_index(const char *s, int c);
 void	ft_execute(t_prompt *prompt);
 int		get_next_line(char **line);
+
+char	**ft_env_cpy(char **envp);
+
+void	ft_pwd(void);
+void	ft_exit(void);
+void	ft_cd(t_prompt *prompt);
+void	ft_env(t_prompt *prompt);
+char	**ft_env_add_var(t_prompt *prompt);
+char	**ft_env_remove_var(t_prompt *prompt);
 
 #endif

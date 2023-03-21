@@ -1,43 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/28 10:44:38 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/20 17:02:11 by kristori         ###   ########.fr       */
+/*   Created: 2023/03/20 14:37:37 by kristori          #+#    #+#             */
+/*   Updated: 2023/03/20 14:39:53 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_free(char **str)
+void	ft_pwd(void)
 {
-	int	i;
+	char	*buf;
 
-	i = 0;
-	while (str[i])
-	{
-		free(str[i]);
-		i++;
-	}
-	free(str);
-}
-
-void	ft_free_list(t_list *list)
-{
-	t_list	*tmp;
-
-	while (list != NULL)
-	{
-		tmp = list;
-		ft_free(((t_mini *)list->content)->full_cmd);
-		free(((t_mini *)list->content)->full_path);
-		free(((t_mini *)list->content)->built_in);
-		free(((t_mini *)list->content)->here_doc);
-		free(list->content);
-		list = list->next;
-		free(tmp);
-	}
+	buf = (char *)malloc(100*sizeof(char));
+	getcwd(buf, 100);
+	printf("%s\n", buf);
+	free(buf);
 }

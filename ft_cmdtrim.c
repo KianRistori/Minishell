@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/16 14:32:39 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/21 10:21:19 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,6 +229,8 @@ char	**ft_cmdtrim(char *str, char set)
 	k = 0;
 	flag[0] = 0;
 	flag[1] = 0;
+	if (!str)
+		return (NULL);
 	ris = (char **)malloc(sizeof(char *) * (ft_wordcount(str, set) + 1));
 	while (str[i] != '\0')
 	{
