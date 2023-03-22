@@ -6,18 +6,16 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 12:18:24 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/21 14:34:41 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/22 15:59:05 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	ft_execve_built_int(t_prompt *prompt, char *str)
+static void	ft_execve_built_in(t_prompt *prompt, char *str)
 {
 	if (ft_strcmp(str, "pwd") == 0)
 		ft_pwd();
-	else if (ft_strcmp(str, "exit") == 0)
-		ft_exit();
 	else if (ft_strcmp(str, "cd") == 0)
 		ft_cd(prompt);
 	else if (ft_strcmp(str, "env") == 0)
@@ -71,11 +69,14 @@ static void	ft_process(t_prompt *prompt)
 		dup2(fd[1], STDOUT_FILENO);
 		if (((t_mini *)prompt->cmds->content)->built_in != NULL)
 		{
-			ft_execve_built_int(prompt, ((t_mini *)prompt->cmds->content)->built_in);
+			ft_execve_built_in(prompt, ((t_mini *)prompt->cmds->content)->built_in);
 			exit(EXIT_SUCCESS);
 		}
 		else
+		{
 			execve(((t_mini *)prompt->cmds->content)->full_path, ((t_mini *)prompt->cmds->content)->full_cmd, prompt->envp);
+			exit(EXIT_SUCCESS);
+		}
 	}
 	else
 	{
@@ -83,7 +84,6 @@ static void	ft_process(t_prompt *prompt)
 		dup2(fd[0], STDIN_FILENO);
 		waitpid(pid, NULL, 0);
 	}
-
 }
 
 static char	**ft_remove_char(char **cmd)
@@ -171,12 +171,16 @@ void	ft_execute(t_prompt *prompt)
 			prompt->cmds = prompt->cmds->next;
 		}
 	}
+	// printf("here_doc: %s\n", ((t_mini *)prompt->cmds->content)->here_doc);
 	if (((t_mini *)prompt->cmds->content)->here_doc != NULL)
 		ft_here_doc(prompt);
 	if (out_file > 0)
 		dup2(out_file, STDOUT_FILENO);
 	if (((t_mini *)prompt->cmds->content)->built_in != NULL)
-		ft_execve_built_int(prompt, ((t_mini *)prompt->cmds->content)->built_in);
+		ft_execve_built_in(prompt, ((t_mini *)prompt->cmds->content)->built_in);
 	else
+	{
 		execve(((t_mini *)prompt->cmds->content)->full_path, ((t_mini *)prompt->cmds->content)->full_cmd, prompt->envp);
+		exit(EXIT_SUCCESS);
+	}
 }

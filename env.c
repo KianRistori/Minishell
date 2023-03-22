@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/20 15:16:52 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/21 14:16:49 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/22 10:51:28 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,13 @@ char	**ft_env_add_var(t_prompt *prompt)
 {
 	char	**ris;
 	int		i;
+	int		index;
 
 	if (ft_check_exists(prompt) == 0)
 	{
+		index = ft_strchr_index(((t_mini *)prompt->cmds->content)->full_cmd[1], '=');
+		if (index == -1 || ((t_mini *)prompt->cmds->content)->full_cmd[1][index + 1] == '\0')
+			return (prompt->envp);
 		i = 0;
 		while (prompt->envp[i])
 			i++;

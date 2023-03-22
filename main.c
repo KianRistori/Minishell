@@ -6,11 +6,13 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:48:47 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/21 14:12:25 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/22 15:59:16 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int g_status;
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -29,8 +31,14 @@ int	main(int argc, char **argv, char **envp)
 	prompt->envp = ft_env_cpy(envp);
 	while (1)
 	{
+		signal(SIGINT, ft_sighandle);
+		signal(SIGQUIT, SIG_IGN);
 		input = readline(shell_prompt);
 		add_history(input);
+		if (input == NULL)
+			exit(EXIT_SUCCESS);
+		if (ft_strcmp(input, "exit") == 0)
+			exit(EXIT_SUCCESS);
 		prompt->pid = fork();
 		if (!prompt->pid)
 		{
@@ -44,6 +52,7 @@ int	main(int argc, char **argv, char **envp)
 			ft_free(tmp);
 			ft_free(ris);
 			ft_free_list(list);
+			exit(EXIT_SUCCESS);
 		}
 		else
 			waitpid(prompt->pid, NULL, 0);

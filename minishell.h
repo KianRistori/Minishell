@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:47:49 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/21 14:15:48 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/22 15:59:09 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/types.h>
+# include <signal.h>
+# include <sys/ioctl.h>
+# include <termios.h>
+
+extern int g_status;
 
 typedef struct s_prompt
 {
@@ -60,10 +65,11 @@ int		get_next_line(char **line);
 char	**ft_env_cpy(char **envp);
 
 void	ft_pwd(void);
-void	ft_exit(void);
 void	ft_cd(t_prompt *prompt);
 void	ft_env(t_prompt *prompt);
 char	**ft_env_add_var(t_prompt *prompt);
 char	**ft_env_remove_var(t_prompt *prompt);
+
+void	ft_sighandle(int sig);
 
 #endif

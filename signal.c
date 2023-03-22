@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/20 14:37:37 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/22 10:38:06 by kristori         ###   ########.fr       */
+/*   Created: 2023/03/22 10:57:55 by kristori          #+#    #+#             */
+/*   Updated: 2023/03/22 15:52:39 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_pwd(void)
+void	ft_sighandle(int sig)
 {
-	char	*buf;
+	if (sig == SIGINT)
+	{
+		g_status = 130;
+		ioctl(STDIN_FILENO, TIOCSTI, "\n");
+		rl_replace_line("", 0);
+		rl_on_new_line();
+	}
 
-	buf = (char *)malloc(100 * sizeof(char));
-	getcwd(buf, 100);
-	printf("%s\n", buf);
-	free(buf);
 }
