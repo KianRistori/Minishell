@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 15:00:15 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/22 11:24:15 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/24 10:48:39 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,15 +127,14 @@ static char	**ft_fill_built_in(void)
 {
 	char	**ris;
 
-	ris = (char **)malloc(sizeof(char *) * (5));
-	// ris[0] = ft_strdup("echo");
-	ris[0] =  ft_strdup("cd");
-	ris[1] =  ft_strdup("pwd");
-	ris[2] =  ft_strdup("export");
-	ris[3] =  ft_strdup("unset");
-	ris[4] =  ft_strdup("env");
-	// ris[5] =  ft_strdup("exit");
-	ris[5] = 0;
+	ris = (char **)malloc(sizeof(char *) * (7));
+	ris[0] = ft_strdup("echo");
+	ris[1] =  ft_strdup("cd");
+	ris[2] =  ft_strdup("pwd");
+	ris[3] =  ft_strdup("export");
+	ris[4] =  ft_strdup("unset");
+	ris[5] =  ft_strdup("env");
+	ris[6] = 0;
 	return (ris);
 }
 
