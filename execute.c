@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 12:18:24 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/24 12:19:12 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/26 18:12:09 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,39 +64,114 @@ static void	ft_here_doc(t_prompt *prompt)
 	}
 }
 
-static void	ft_process(t_prompt *prompt, int *fd)
+static void ft_execute_commands(t_prompt *prompt)
 {
+	int		status;
+	int		pipefd[2];
 	pid_t	pid;
+	int		in_fd = 0;
 
-	pid = fork();
-	if (pid == -1)
-		perror("error\n");
-	if (pid == 0)
+	t_list *cmds = prompt->cmds;
+
+	while (cmds != NULL)
 	{
-		close(fd[0]);
-		dup2(fd[1], STDOUT_FILENO);
-		close(fd[1]);
-		if (((t_mini *)prompt->cmds->content)->built_in != NULL)
+		t_mini *cmd = cmds->content;
+
+		if (cmds->next != NULL)
 		{
-			ft_execve_built_in(prompt, ((t_mini *)prompt->cmds->content)->built_in);
-			exit(EXIT_SUCCESS);
+			// Not the last command, create a new pipe
+			if (pipe(pipefd) == -1)
+			{
+				perror("pipe");
+				exit(EXIT_FAILURE);
+			}
+		}
+		pid = fork();
+		if (pid == -1)
+		{
+			perror("fork");
+			exit(EXIT_FAILURE);
+		}
+		if (pid == 0)
+		{
+			// Child process
+			if (in_fd != 0)
+			{
+				dup2(in_fd, STDIN_FILENO); // Redirect input
+				close(in_fd);
+			}
+			else if (cmd->infile > 0)
+			{
+				if (cmd->infile == -1)
+				{
+					perror("open");
+					exit(EXIT_FAILURE);
+				}
+				dup2(cmd->infile, STDIN_FILENO);
+				close(cmd->infile);
+			}
+			if (((t_mini *) prompt->cmds->content)->here_doc != NULL)
+			{
+				ft_here_doc(prompt);
+			}
+			if (cmds->next != NULL)
+			{
+				// Not the last command, redirect output to pipe
+				close(pipefd[0]); // Close unused read end
+				dup2(pipefd[1], STDOUT_FILENO); // Redirect output
+				close(pipefd[1]);
+			}
+			else
+			{
+				// Last command, check for output redirection
+				if (cmd->outfile > 0)
+					dup2(cmd->outfile, STDOUT_FILENO); // Redirect output to terminal
+				else if (cmd->outfile == 2)
+					dup2(prompt->pid, STDERR_FILENO); // Redirect error output to terminal
+			}
+			if (cmd->full_path != NULL && cmd->built_in == NULL)
+			{
+				// Execute external command
+				execve(cmd->full_path, cmd->full_cmd, prompt->envp);
+			}
+			else if (cmd->built_in == NULL)
+			{
+				printf("Command not found: %s\n", cmd->full_cmd[0]);
+				exit(127);
+			}
+			exit(EXIT_FAILURE);
 		}
 		else
 		{
-			execve(((t_mini *)prompt->cmds->content)->full_path, ((t_mini *)prompt->cmds->content)->full_cmd, prompt->envp);
-			// printf("command not found: %s\n", ((t_mini *) prompt->cmds->content)->full_cmd[0]);
-			perror("command not found");
-			exit(127);
+			// Parent process
+			if (in_fd != 0)
+			{
+				close(in_fd);
+			}
+			if (cmds->next != NULL)
+			{
+				// Not the last command, save input fd for next command
+				close(pipefd[1]); // Close unused write end
+				in_fd = pipefd[0];
+			}
+			else if (cmd->built_in != NULL)
+			{
+				ft_execve_built_in(prompt, cmd->built_in);
+				status = 0;
+			}
+			else
+			{
+				// Last command, wait for child process to finish
+				waitpid(pid, &status, 0);
+				if (WIFEXITED(status))
+					status = WEXITSTATUS(status);
+			}
+			cmds = cmds->next;
 		}
 	}
-	else
-	{
-		close(fd[1]);
-		dup2(fd[0], STDIN_FILENO);
-		close(fd[0]);
-		waitpid(pid, NULL, 0);
-	}
+	g_status = status;
 }
+
 
 static char	**ft_remove_char(char **cmd)
 {
@@ -148,70 +223,12 @@ static char	**ft_remove_char(char **cmd)
 void	ft_execute(t_prompt *prompt)
 {
 	t_list *list;
-	int in_file;
-	int out_file;
-	int status;
-	int		fd[2];
 
 	list = prompt->cmds;
-	in_file = 0;
-	out_file = 0;
 	while (prompt->cmds != NULL) {
-		if (((t_mini *) prompt->cmds->content)->infile > 0)
-			in_file = ((t_mini *) prompt->cmds->content)->infile;
-		if (((t_mini *) prompt->cmds->content)->outfile > 0)
-			out_file = ((t_mini *) prompt->cmds->content)->outfile;
 		((t_mini *) prompt->cmds->content)->full_cmd = ft_remove_char(((t_mini *) prompt->cmds->content)->full_cmd);
 		prompt->cmds = prompt->cmds->next;
 	}
 	prompt->cmds = list;
-	printf("in_file: %d\n", in_file);
-	printf("out_file: %d\n", out_file);
-	if (in_file > 0)
-		dup2(in_file, STDIN_FILENO);
-	int k = ft_lstsize(prompt->cmds);
-	int i = 0;
-	if (k > 1)
-	{
-		if (pipe(fd) == -1)
-			perror("error\n");
-		while (i < k - 1)
-		{
-			ft_process(prompt, fd);
-			i++;
-			prompt->cmds = prompt->cmds->next;
-		}
-	}
-	if (((t_mini *) prompt->cmds->content)->here_doc != NULL)
-		ft_here_doc(prompt);
-	if (out_file > 0)
-		dup2(out_file, STDOUT_FILENO);
-	if (((t_mini *) prompt->cmds->content)->built_in != NULL)
-	{
-		ft_execve_built_in(prompt, ((t_mini *) prompt->cmds->content)->built_in);
-		status = 0;
-	}
-	else
-	{
-		pid_t pid = fork();
-		if (pid == -1)
-		{
-			perror("fork error\n");
-			exit(EXIT_FAILURE);
-		}
-		if (pid == 0)
-		{
-			execve(((t_mini *) prompt->cmds->content)->full_path, ((t_mini *) prompt->cmds->content)->full_cmd, prompt->envp);
-			// printf("command not found: %s\n", ((t_mini *) prompt->cmds->content)->full_cmd[0]);
-			perror("command not found");
-			exit(127);
-		}
-		else
-		{
-			waitpid(pid, &status, 0);
-			if (WIFEXITED(status))
-				status = WEXITSTATUS(status);
-		}
-	}
-	g_status = status;
+	ft_execute_commands(prompt);
 }

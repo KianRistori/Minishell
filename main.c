@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:48:47 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/24 11:44:48 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/26 17:41:23 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,12 @@ int	main(int argc, char **argv, char **envp)
 	prompt->envp = ft_env_cpy(envp);
 	while (1)
 	{
-		input = readline(shell_prompt);
-		add_history(input);
+		printf("g_status: %d\n", g_status);
+		list = NULL;
 		signal(SIGINT, ft_sighandle);
 		signal(SIGQUIT, SIG_IGN);
+		input = readline(shell_prompt);
+		add_history(input);
 		list = NULL;
 		tmp = ft_cmdtrim(input, ' ');
 		ris = ft_cmdsubsplit(tmp);
@@ -45,6 +47,7 @@ int	main(int argc, char **argv, char **envp)
 		ft_free(tmp);
 		ft_free(ris);
 		ft_free_list(list);
+		free(input);
 	}
 	free(shell_prompt);
 	return 0;

@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 15:00:15 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/24 10:48:39 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/25 12:51:01 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,6 @@ t_mini	*ft_fill_t_mini(char **cmd, char **envp, char **built_in)
 		i++;
 	}
 	i = 0;
-	// if (ris->outfile > 0)
-	// 	ris->full_path = ft_path(cmd[2], envp);
-	// else
-	// 	ris->full_path = ft_path(cmd[0], envp);
-	// if (!ris->full_path)
-	// 	exit(EXIT_FAILURE);
 	while (cmd[i])
 		i++;
 	ris->full_cmd = (char **)malloc(sizeof(char *) * (i + 1));

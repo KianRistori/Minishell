@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 12:02:42 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/24 11:43:22 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/25 13:52:23 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,17 +88,6 @@ char	*ft_strjoin2(char *s1, char const *s2)
 	free(s1);
 	return (str);
 }
-
-int		ft_countlist(char **str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
-
 
 int	ft_strchr_index(const char *s, int c)
 {
