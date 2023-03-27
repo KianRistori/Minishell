@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
+/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 12:18:24 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/26 18:12:09 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/27 12:36:54 by javellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,13 @@ static void	ft_execve_built_in(t_prompt *prompt, char *str)
 		int k = 1;
 		while (((t_mini *)prompt->cmds->content)->full_cmd[k])
 		{
-			ft_print_echo(prompt->envp, ((t_mini *)prompt->cmds->content)->full_cmd[k]);
-			printf(" ");
+			ft_print_echo(prompt->envp, ((t_mini *)prompt->cmds->content)->full_cmd[k], ((t_mini *)prompt->cmds->content)->outfile);
+			// printf(" ");
+			write(((t_mini *)prompt->cmds->content)->outfile, " ", 1);
 			k++;
 		}
-		printf("\n");
+		write(((t_mini *)prompt->cmds->content)->outfile, "\n", 1);
+		// printf("\n");
 	}
 }
 
@@ -79,6 +81,7 @@ static void ft_execute_commands(t_prompt *prompt)
 
 		if (cmds->next != NULL)
 		{
+			printf("ok\n");
 			// Not the last command, create a new pipe
 			if (pipe(pipefd) == -1)
 			{

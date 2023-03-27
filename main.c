@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
+/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:48:47 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/26 17:41:23 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/27 11:44:03 by javellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ int	main(int argc, char **argv, char **envp)
 		signal(SIGINT, ft_sighandle);
 		signal(SIGQUIT, SIG_IGN);
 		input = readline(shell_prompt);
+		if (!input)
+			break ;
 		add_history(input);
 		list = NULL;
 		tmp = ft_cmdtrim(input, ' ');
