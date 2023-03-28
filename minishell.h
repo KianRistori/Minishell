@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:47:49 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/27 12:10:21 by javellis         ###   ########.fr       */
+/*   Updated: 2023/03/28 15:32:11 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,12 @@ int		get_next_line(char **line);
 
 char	**ft_env_cpy(char **envp);
 
-void	ft_pwd(void);
+void	ft_pwd(int in_fd);
 void	ft_cd(t_prompt *prompt);
-void	ft_env(t_prompt *prompt);
+void	ft_env(t_prompt *prompt, int in_fd);
 char	**ft_env_add_var(t_prompt *prompt);
 char	**ft_env_remove_var(t_prompt *prompt);
-void	ft_print_echo(char **envp, char *str, int outfile);
+void	ft_echo(t_prompt *prompt, int in_fd);
 
 void	ft_sighandle(int sig);
 

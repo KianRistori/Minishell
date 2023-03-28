@@ -3,47 +3,71 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:03:21 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/27 12:14:30 by javellis         ###   ########.fr       */
+/*   Updated: 2023/03/28 16:48:32 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_print_echo(char **envp, char *str, int outfile)
+static void	ft_print_var(char *str, int *flag, char **env, int in_fd)
 {
-	char	**split_str;
+	int i;
 	char	**split_env;
-	int		i;
-	int		j;
-	int		len;
 
-	i = 1;
-	j = 0;
-	if (ft_strchr(str, '$') == NULL)
-		write(outfile, str, ft_strlen(str));
-		// printf("%s", str);
-	else
+	i = 0;
+	if (flag[1] == 0)
 	{
-		split_str = ft_split(str, '$');
-		while (split_str[i])
+		while (env[i])
 		{
-			while (envp[j])
-			{
-				split_env = ft_split(envp[j], '=');
-				j++;
-				if (ft_strlen(split_env[0]) > ft_strlen(split_str[i]))
-					len = ft_strlen(split_env[0]);
-				else
-					len = ft_strlen(split_str[i]);
-				if (!ft_strncmp(split_env[0], ft_strtrim(split_str[i], " "), len))
-					write(outfile, split_env[1], ft_strlen(split_env[1]));
-					// printf("%s", split_env[1]);
-			}
-			j = 0;
+			split_env = ft_split(env[i], '=');
+			if (ft_strcmp(split_env[0], str))
+				write(in_fd, split_env[1],ft_strlen(split_env[1]));
 			i++;
 		}
 	}
+	else
+	{
+		write(in_fd, "$",1);
+		write(in_fd, str, ft_strlen(str));
+	}
+}
+
+void	ft_echo(t_prompt *prompt, int in_fd)
+{
+	int	flag[2];
+	int	i;
+	int	j;
+	int	k;
+
+	k = 0;
+	i = 1;
+	flag[0] = 0;
+	flag[1] = 0;
+	while (((t_mini *)prompt->cmds->content)->full_cmd[i])
+	{
+		j = 0;
+		while (((t_mini *)prompt->cmds->content)->full_cmd[i][j])
+		{
+			if (((t_mini *)prompt->cmds->content)->full_cmd[i][j] != '$')
+				write(in_fd, &((t_mini *)prompt->cmds->content)->full_cmd[i][j], 1);
+			else if (((t_mini *)prompt->cmds->content)->full_cmd[i][j] == '\"')
+				flag[0] = !flag[0];
+			else if (((t_mini *)prompt->cmds->content)->full_cmd[i][j] == '\'')
+				flag[1] = !flag[1];
+			else
+			{
+				while (((t_mini *)prompt->cmds->content)->full_cmd[i][k] && ((t_mini *)prompt->cmds->content)->full_cmd[i][k] != ' '
+					&& ((t_mini *)prompt->cmds->content)->full_cmd[i][k] != '\'' && ((t_mini *)prompt->cmds->content)->full_cmd[i][k] != '\"')
+						k++;
+				ft_print_var(ft_strlcpy_quote(((t_mini *)prompt->cmds->content)->full_cmd[i], j + 1,k), flag, prompt->envp, in_fd);
+			}
+			j++;
+		}
+		write(in_fd, " ", 1);
+		i++;
+	}
+	write(in_fd, "\n", 1);
 }

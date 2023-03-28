@@ -3,40 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 12:18:24 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/27 12:36:54 by javellis         ###   ########.fr       */
+/*   Updated: 2023/03/28 16:05:14 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	ft_execve_built_in(t_prompt *prompt, char *str)
+static void	ft_execve_built_in(t_prompt *prompt, char *str, int out_fd)
 {
+	if (out_fd == 0)
+		out_fd = 1;
 	if (ft_strcmp(str, "pwd") == 0)
-		ft_pwd();
+		ft_pwd(out_fd);
 	else if (ft_strcmp(str, "cd") == 0)
 		ft_cd(prompt);
 	else if (ft_strcmp(str, "env") == 0)
-		ft_env(prompt);
+		ft_env(prompt, out_fd);
 	else if (ft_strcmp(str, "export") == 0)
 		prompt->envp = ft_env_add_var(prompt);
 	else if (ft_strcmp(str, "unset") == 0)
 		prompt->envp = ft_env_remove_var(prompt);
 	else if (ft_strcmp(str, "echo") == 0)
-	{
-		int k = 1;
-		while (((t_mini *)prompt->cmds->content)->full_cmd[k])
-		{
-			ft_print_echo(prompt->envp, ((t_mini *)prompt->cmds->content)->full_cmd[k], ((t_mini *)prompt->cmds->content)->outfile);
-			// printf(" ");
-			write(((t_mini *)prompt->cmds->content)->outfile, " ", 1);
-			k++;
-		}
-		write(((t_mini *)prompt->cmds->content)->outfile, "\n", 1);
-		// printf("\n");
-	}
+		ft_echo(prompt, out_fd);
+}
+
+static void	ft_execve_built_in_fork(t_prompt *prompt, char *str, int in_fd)
+{
+	if (ft_strcmp(str, "pwd") == 0)
+		ft_pwd(in_fd);
+	else if (ft_strcmp(str, "env") == 0)
+		ft_env(prompt, in_fd);
+	else if (ft_strcmp(str, "echo") == 0)
+		ft_echo(prompt, in_fd);
 }
 
 static void	ft_here_doc(t_prompt *prompt)
@@ -81,7 +82,6 @@ static void ft_execute_commands(t_prompt *prompt)
 
 		if (cmds->next != NULL)
 		{
-			printf("ok\n");
 			// Not the last command, create a new pipe
 			if (pipe(pipefd) == -1)
 			{
@@ -89,88 +89,93 @@ static void ft_execute_commands(t_prompt *prompt)
 				exit(EXIT_FAILURE);
 			}
 		}
-		pid = fork();
-		if (pid == -1)
+		if (cmd->built_in != NULL && cmds->next == NULL)
 		{
-			perror("fork");
-			exit(EXIT_FAILURE);
-		}
-		if (pid == 0)
-		{
-			// Child process
-			if (in_fd != 0)
-			{
-				dup2(in_fd, STDIN_FILENO); // Redirect input
-				close(in_fd);
-			}
-			else if (cmd->infile > 0)
-			{
-				if (cmd->infile == -1)
-				{
-					perror("open");
-					exit(EXIT_FAILURE);
-				}
-				dup2(cmd->infile, STDIN_FILENO);
-				close(cmd->infile);
-			}
-			if (((t_mini *) prompt->cmds->content)->here_doc != NULL)
-			{
-				ft_here_doc(prompt);
-			}
-			if (cmds->next != NULL)
-			{
-				// Not the last command, redirect output to pipe
-				close(pipefd[0]); // Close unused read end
-				dup2(pipefd[1], STDOUT_FILENO); // Redirect output
-				close(pipefd[1]);
-			}
-			else
-			{
-				// Last command, check for output redirection
-				if (cmd->outfile > 0)
-					dup2(cmd->outfile, STDOUT_FILENO); // Redirect output to terminal
-				else if (cmd->outfile == 2)
-					dup2(prompt->pid, STDERR_FILENO); // Redirect error output to terminal
-			}
-			if (cmd->full_path != NULL && cmd->built_in == NULL)
-			{
-				// Execute external command
-				execve(cmd->full_path, cmd->full_cmd, prompt->envp);
-			}
-			else if (cmd->built_in == NULL)
-			{
-				printf("Command not found: %s\n", cmd->full_cmd[0]);
-				exit(127);
-			}
-			exit(EXIT_FAILURE);
+			ft_execve_built_in(prompt, cmd->full_cmd[0], cmd->outfile);
+			status =  0;
 		}
 		else
 		{
-			// Parent process
-			if (in_fd != 0)
+			pid = fork();
+			if (pid == -1)
 			{
-				close(in_fd);
+				perror("fork");
+				exit(EXIT_FAILURE);
 			}
-			if (cmds->next != NULL)
+			if (pid == 0)
 			{
-				// Not the last command, save input fd for next command
-				close(pipefd[1]); // Close unused write end
-				in_fd = pipefd[0];
-			}
-			else if (cmd->built_in != NULL)
-			{
-				ft_execve_built_in(prompt, cmd->built_in);
-				status = 0;
+				// Child process
+				if (in_fd != 0)
+				{
+					dup2(in_fd, STDIN_FILENO); // Redirect input
+					close(in_fd);
+				}
+				else if (cmd->infile > 0)
+				{
+					if (cmd->infile == -1)
+					{
+						perror("open");
+						exit(EXIT_FAILURE);
+					}
+					dup2(cmd->infile, STDIN_FILENO);
+					close(cmd->infile);
+				}
+				if (cmd->here_doc != NULL)
+				{
+					ft_here_doc(prompt);
+				}
+				if (cmds->next != NULL && cmd->built_in == NULL)
+				{
+					// Not the last command, redirect output to pipe
+					close(pipefd[0]); // Close unused read end
+					dup2(pipefd[1], STDOUT_FILENO); // Redirect output
+					close(pipefd[1]);
+				}
+				else
+				{
+					// Last command, check for output redirection
+					if (cmd->outfile > 0)
+						dup2(cmd->outfile, STDOUT_FILENO); // Redirect output to terminal
+					else if (cmd->outfile == 2)
+						dup2(prompt->pid, STDERR_FILENO); // Redirect error output to terminal
+				}
+				if (cmd->built_in != NULL && cmds->next != NULL)
+				{
+					ft_execve_built_in_fork(prompt, cmd->full_cmd[0], pipefd[1]);
+					exit(EXIT_SUCCESS);
+				}
+				if (cmd->full_path != NULL && cmd->built_in == NULL)
+				{
+					// Execute external command
+					execve(cmd->full_path, cmd->full_cmd, prompt->envp);
+				}
+				else if (cmd->built_in == NULL)
+				{
+					printf("Command not found: %s\n", cmd->full_cmd[0]);
+					exit(127);
+				}
+				exit(EXIT_FAILURE);
 			}
 			else
 			{
+				// Parent process
+				if (in_fd != 0)
+				{
+					close(in_fd);
+				}
+				if (cmds->next != NULL)
+				{
+					// Not the last command, save input fd for next command
+					close(pipefd[1]); // Close unused write end
+					in_fd = pipefd[0];
+				}
 				// Last command, wait for child process to finish
 				waitpid(pid, &status, 0);
 				if (WIFEXITED(status))
 					status = WEXITSTATUS(status);
 			}
-			cmds = cmds->next;
 		}
+		cmds = cmds->next;
 	}
 	g_status = status;
 }

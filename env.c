@@ -6,20 +6,21 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/20 15:16:52 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/23 16:15:18 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/28 13:42:13 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_env(t_prompt *prompt)
+void	ft_env(t_prompt *prompt, int in_fd)
 {
 	int	i;
 
 	i = 0;
 	while (prompt->envp[i])
 	{
-		printf("%s\n", prompt->envp[i]);
+		write(in_fd, prompt->envp[i], ft_strlen(prompt->envp[i]));
+		write(in_fd, "\n", 1);
 		i++;
 	}
 }

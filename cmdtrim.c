@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdtrim.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/27 10:59:38 by javellis         ###   ########.fr       */
+/*   Updated: 2023/03/28 16:16:45 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ static int	ft_wordcount(char *str, char set)
 	i = 0;
 	flag[0] = 0;
 	flag[1] = 0;
-	//printf("str[%d] = %c",i,str[i]);
 	while (str[i])
 	{
 		if (flag[0] == 0 && flag[1] == 0 && str[i] == set)
@@ -264,8 +263,8 @@ void	ft_strtrim_all(char **cmd)
 	while (cmd[i])
 	{
 		cmd[i] = ft_strtrim2(cmd[i], " ");
-		cmd[i] = ft_strtrim2(cmd[i], "\'");
-		cmd[i] = ft_strtrim2(cmd[i], "\"");
+		// cmd[i] = ft_strtrim2(cmd[i], "\'");
+		// cmd[i] = ft_strtrim2(cmd[i], "\"");
 		i++;
 	}
 }

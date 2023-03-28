@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/25 13:51:22 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/27 12:15:31 by javellis         ###   ########.fr       */
+/*   Updated: 2023/03/28 11:56:15 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,3 @@ int	ft_countlist(char **str)
 		i++;
 	return (i);
 }
-
-// void	ft_putstr(char *str, int outfile)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while(str && str[i])
-// 	{
-// 		write(outfile, str[i], 1);
-// 	}
-// }
