@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
+/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:48:47 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/28 15:39:24 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/29 12:42:46 by javellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int	main(int argc, char **argv, char **envp)
 			ft_strtrim_all(ris);
 			ft_fill_struct(&list, ris, envp);
 			prompt->cmds = list;
+
 			ft_execute(prompt);
 			ft_free(tmp);
 			ft_free(ris);

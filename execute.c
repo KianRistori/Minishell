@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
+/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 12:18:24 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/28 16:05:14 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/29 15:48:27 by javellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ static void ft_execute_commands(t_prompt *prompt)
 	int		in_fd = 0;
 
 	t_list *cmds = prompt->cmds;
-
 	while (cmds != NULL)
 	{
 		t_mini *cmd = cmds->content;
@@ -141,12 +140,14 @@ static void ft_execute_commands(t_prompt *prompt)
 				}
 				if (cmd->built_in != NULL && cmds->next != NULL)
 				{
+					printf("cmd: %s\n", cmd->built_in);
 					ft_execve_built_in_fork(prompt, cmd->full_cmd[0], pipefd[1]);
 					exit(EXIT_SUCCESS);
 				}
 				if (cmd->full_path != NULL && cmd->built_in == NULL)
 				{
 					// Execute external command
+					printf("cmd: %s\n", cmd->full_cmd[0]);
 					execve(cmd->full_path, cmd->full_cmd, prompt->envp);
 				}
 				else if (cmd->built_in == NULL)

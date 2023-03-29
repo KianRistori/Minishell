@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
+/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 12:02:42 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/25 13:52:23 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/29 12:41:05 by javellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ char	*ft_strtrim2(char *s1, char const *set)
 	return (ris);
 }
 
-char	*ft_strjoin2(char *s1, char const *s2)
+char	*ft_strjoin2(char *s1, char *s2)
 {
 	char	*str;
 	size_t	i;
@@ -67,6 +67,11 @@ char	*ft_strjoin2(char *s1, char const *s2)
 	{
 		s1 = malloc(1);
 		s1[0] = '\0';
+	}
+	if (s2 == NULL)
+	{
+		s2 = malloc(1);
+		s2[0] = '\0';
 	}
 	str = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!str)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdtrim.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
+/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/28 16:16:45 by kristori         ###   ########.fr       */
+/*   Updated: 2023/03/29 15:41:19 by javellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ static char	*ft_substitute(char *str)
 	j = 1;
 	i = 0;
 	ris = NULL;
+	if (ft_strcmp(str, "$?") == 0)
+		return (ft_strdup(str));
 	if (!ft_strchr(str, '$'))
 	{
 		while (str[i])
@@ -148,6 +150,7 @@ static void	ft_search_env(char **cmd)
 	{
 		if (ft_strchr(cmd[i], '$'))
 		{
+			j = 1;
 			split = ft_split2(cmd[i], '$');
 			free(cmd[i]);
 			cmd[i] = ft_substitute(split[0]);
@@ -263,8 +266,8 @@ void	ft_strtrim_all(char **cmd)
 	while (cmd[i])
 	{
 		cmd[i] = ft_strtrim2(cmd[i], " ");
-		// cmd[i] = ft_strtrim2(cmd[i], "\'");
-		// cmd[i] = ft_strtrim2(cmd[i], "\"");
+		cmd[i] = ft_strtrim2(cmd[i], "\'");
+		cmd[i] = ft_strtrim2(cmd[i], "\"");
 		i++;
 	}
 }
