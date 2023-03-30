@@ -6,7 +6,7 @@
 /*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/29 15:41:19 by javellis         ###   ########.fr       */
+/*   Updated: 2023/03/30 10:49:01 by javellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ static char	*ft_substitute(char *str)
 	static int	flag;
 	int			i;
 	int			j;
+	char		*env_var;
 
 	j = 1;
 	i = 0;
@@ -97,7 +98,14 @@ static char	*ft_substitute(char *str)
 	if (flag == 0)
 	{
 		tmp = ft_strlcpy_quote(str, i, j);
-		ris = ft_strjoin2(ris, getenv(tmp));
+		env_var = getenv(tmp);
+		if (env_var)
+			ris = ft_strjoin2(ris, env_var);
+		else
+		{
+			tmp = ft_strjoin2(ft_strdup("$"), tmp);
+			ris = ft_strjoin2(ris, tmp);
+		}
 		free(tmp);
 	}
 	else
@@ -266,8 +274,8 @@ void	ft_strtrim_all(char **cmd)
 	while (cmd[i])
 	{
 		cmd[i] = ft_strtrim2(cmd[i], " ");
-		cmd[i] = ft_strtrim2(cmd[i], "\'");
-		cmd[i] = ft_strtrim2(cmd[i], "\"");
+		// cmd[i] = ft_strtrim2(cmd[i], "\'");
+		// cmd[i] = ft_strtrim2(cmd[i], "\"");
 		i++;
 	}
 }
