@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:03:21 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/03 14:28:46 by javellis         ###   ########.fr       */
+/*   Updated: 2023/04/03 17:16:10 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,28 @@
 
 static void	ft_print_var(char *str, int in_fd, char **envp)
 {
+	char	**split;
+	char	*var;
+	char	*tmp;
 	int	i;
 	int	j;
 	int k;
-	char	*var;
-	char	**split;
-	char	*tmp;
 
 	i = 0;
 	k = 0;
-	// printf("str :%s\n",str);
-	str = ft_strtrim2(str, "\'");
-	str = ft_strtrim2(str, "\"");
+	str = ft_strtrim(str, "\'");
+	str = ft_strtrim(str, "\"");
+	int l = 0;
+	while (str[l])
+	{
+		printf("str[%d]: %c\n", l, str[l]);
+		l++;
+	}
 	while (str[i])
 	{
 		k = 0;
 		while (str[i] && str[i] != '$')
 		{
-			// printf("ok\n");
 			write(in_fd, &str[i], 1);
 			i++;
 		}
@@ -48,20 +52,15 @@ static void	ft_print_var(char *str, int in_fd, char **envp)
 			while (str[j] && str[j] != ' ' && str[j] != '\'' && str[j] != '\"')
 			{
 				j++;
-				if (str[j + 1] == '$')
+				if (str[j] && str[j + 1] == '$')
 				{
 					break;
 				}
 			}
-			// printf("j :%d, i: %d, strlen: %ld\n", j , i + 1, ft_strlen(str));
 			if ((int)ft_strlen(str) == j)
-			{
-				// printf("\nok\n");
 				var = ft_strlcpy_quote(str, j, i + 1);
-			}
 			else
 				var = ft_strlcpy_quote(str, j + 1, i + 1);
-			// printf("vat :%s\n", var);
 			while (envp[k])
 			{
 				split = ft_split(envp[k], '=');
@@ -71,9 +70,12 @@ static void	ft_print_var(char *str, int in_fd, char **envp)
 			}
 		}
 		i = j;
+		if (str[i] == '\0')
+			break ;
 		i++;
+		free(var);
 	}
-	
+
 }
 
 void	ft_echo(t_prompt *prompt, int in_fd)
@@ -89,12 +91,6 @@ void	ft_echo(t_prompt *prompt, int in_fd)
 	while (((t_mini *)prompt->cmds->content)->full_cmd[i])
 	{
 		j = 0;
-		// int k = 0;
-		// while (((t_mini *)prompt->cmds->content)->full_cmd[k])
-		// {
-		// 	printf("cmd[%d] :%s\n",k, ((t_mini *)prompt->cmds->content)->full_cmd[k]);
-		// 	k++;
-		// }
 		if (ft_strchr(((t_mini *)prompt->cmds->content)->full_cmd[i], '$') && !ft_strchr(((t_mini *)prompt->cmds->content)->full_cmd[i], '\'') && !flag)
 			ft_print_var(((t_mini *)prompt->cmds->content)->full_cmd[i], in_fd, prompt->envp);
 		else
@@ -113,9 +109,12 @@ void	ft_echo(t_prompt *prompt, int in_fd)
 				j++;
 			}
 		}
-		if (((t_mini *)prompt->cmds->content)->full_cmd[i][0] != 0 && ((t_mini *)prompt->cmds->content)->full_cmd[i + 1] != 0 
-				&& ft_strncmp(((t_mini *)prompt->cmds->content)->full_cmd[i], "-n", 2))
-			write(in_fd, " ", 1);
+		if (((t_mini *)prompt->cmds->content)->full_cmd[i] == 0)
+		{
+			if (((t_mini *)prompt->cmds->content)->full_cmd[i][0] != 0 && ((t_mini *)prompt->cmds->content)->full_cmd[i + 1] != 0
+					&& ft_strncmp(((t_mini *)prompt->cmds->content)->full_cmd[i], "-n", 2))
+				write(in_fd, " ", 1);
+		}
 		i++;
 	}
 	if (option)

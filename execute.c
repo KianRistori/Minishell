@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 12:18:24 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/03 14:29:22 by javellis         ###   ########.fr       */
+/*   Updated: 2023/04/03 17:02:53 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ static void ft_execute_commands(t_prompt *prompt)
 	int		pipefd[2];
 	pid_t	pid;
 	int		in_fd = 0;
+	int		input_fd = 0;
 
 	t_list *cmds = prompt->cmds;
 	while (cmds != NULL)
@@ -81,7 +82,6 @@ static void ft_execute_commands(t_prompt *prompt)
 
 		if (cmds->next != NULL)
 		{
-			// Not the last command, create a new pipe
 			if (pipe(pipefd) == -1)
 			{
 				perror("pipe");
@@ -103,51 +103,44 @@ static void ft_execute_commands(t_prompt *prompt)
 			}
 			if (pid == 0)
 			{
-				// Child process
-				if (in_fd != 0)
-				{
-					dup2(in_fd, STDIN_FILENO); // Redirect input
-					close(in_fd);
-				}
-				else if (cmd->infile > 0)
+				if (cmd->infile > 0)
 				{
 					if (cmd->infile == -1)
 					{
 						perror("open");
 						exit(EXIT_FAILURE);
 					}
-					dup2(cmd->infile, STDIN_FILENO);
-					close(cmd->infile);
+					input_fd = cmd->infile;
+					dup2(input_fd, STDIN_FILENO);
+					close(input_fd);
+				}
+				else if (in_fd != 0)
+				{
+					dup2(in_fd, STDIN_FILENO);
+					close(in_fd);
 				}
 				if (cmd->here_doc != NULL)
-				{
 					ft_here_doc(prompt);
-				}
-				if (cmds->next != NULL && cmd->built_in == NULL)
+				if (cmds->next != NULL && (cmd->built_in == NULL || ft_strcmp(cmd->built_in, "echo") == 0))
 				{
-					// Not the last command, redirect output to pipe
-					close(pipefd[0]); // Close unused read end
-					dup2(pipefd[1], STDOUT_FILENO); // Redirect output
+					close(pipefd[0]);
+					dup2(pipefd[1], STDOUT_FILENO);
 					close(pipefd[1]);
 				}
 				else
 				{
-					// Last command, check for output redirection
 					if (cmd->outfile > 0)
-						dup2(cmd->outfile, STDOUT_FILENO); // Redirect output to terminal
+						dup2(cmd->outfile, STDOUT_FILENO);
 					else if (cmd->outfile == 2)
-						dup2(prompt->pid, STDERR_FILENO); // Redirect error output to terminal
+						dup2(prompt->pid, STDERR_FILENO);
 				}
-				if (cmd->built_in != NULL && cmds->next != NULL)
+				if (cmd->built_in != NULL && cmds->next != NULL && ft_strcmp(cmd->built_in, "echo") != 0)
 				{
-					// printf("cmd: %s\n", cmd->built_in);
 					ft_execve_built_in_fork(prompt, cmd->full_cmd[0], pipefd[1]);
 					exit(EXIT_SUCCESS);
 				}
-				if (cmd->full_path != NULL && cmd->built_in == NULL)
+				if (cmd->full_path != NULL && (cmd->built_in == NULL || ft_strcmp(cmd->built_in, "echo") == 0))
 				{
-					// Execute external command
-					// printf("cmd: %s\n", cmd->full_cmd[0]);
 					execve(cmd->full_path, cmd->full_cmd, prompt->envp);
 				}
 				else if (cmd->built_in == NULL)
@@ -159,18 +152,15 @@ static void ft_execute_commands(t_prompt *prompt)
 			}
 			else
 			{
-				// Parent process
 				if (in_fd != 0)
-				{
 					close(in_fd);
-				}
 				if (cmds->next != NULL)
 				{
-					// Not the last command, save input fd for next command
-					close(pipefd[1]); // Close unused write end
+					close(pipefd[1]);
 					in_fd = pipefd[0];
 				}
-				// Last command, wait for child process to finish
+				else
+					in_fd = input_fd;
 				waitpid(pid, &status, 0);
 				if (WIFEXITED(status))
 					status = WEXITSTATUS(status);
@@ -204,6 +194,7 @@ static char	**ft_remove_char(char **cmd)
 		}
 		i++;
 	}
+	printf("k: %d, i: %d\n", k, i);
 	ris = (char **)malloc(sizeof(char *) * (k + 1));
 	i = 0;
 	k = 0;
@@ -224,6 +215,7 @@ static char	**ft_remove_char(char **cmd)
 		}
 		i++;
 	}
+	printf("k: %d, i: %d\n", k, i);
 	ft_free(cmd);
 	ris[k] = 0;
 	return (ris);
@@ -234,7 +226,8 @@ void	ft_execute(t_prompt *prompt)
 	t_list *list;
 
 	list = prompt->cmds;
-	while (prompt->cmds != NULL) {
+	while (prompt->cmds != NULL)
+	{
 		((t_mini *) prompt->cmds->content)->full_cmd = ft_remove_char(((t_mini *) prompt->cmds->content)->full_cmd);
 		prompt->cmds = prompt->cmds->next;
 	}

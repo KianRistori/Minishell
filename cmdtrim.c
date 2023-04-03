@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdtrim.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/30 10:49:01 by javellis         ###   ########.fr       */
+/*   Updated: 2023/04/03 17:18:51 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ static char	*ft_substitute(char *str)
 {
 	char		*ris;
 	char		*tmp;
+	char		*tmp2;
 	static int	flag;
 	int			i;
 	int			j;
@@ -103,8 +104,12 @@ static char	*ft_substitute(char *str)
 			ris = ft_strjoin2(ris, env_var);
 		else
 		{
-			tmp = ft_strjoin2(ft_strdup("$"), tmp);
-			ris = ft_strjoin2(ris, tmp);
+			tmp2 = ft_strdup(tmp);
+			tmp = ft_strjoin2(ft_strdup("$"), tmp2);
+			free(tmp2);
+			tmp2 = ft_strdup(tmp);
+			ris = ft_strjoin2(ris, tmp2);
+			free(tmp2);
 		}
 		free(tmp);
 	}

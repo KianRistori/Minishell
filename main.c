@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:48:47 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/29 12:42:46 by javellis         ###   ########.fr       */
+/*   Updated: 2023/04/03 17:05:22 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 int	main(int argc, char **argv, char **envp)
 {
 	t_prompt	*prompt;
-	t_list		*list;
 	(void)argc;
 	(void)argv;
 
@@ -29,7 +28,7 @@ int	main(int argc, char **argv, char **envp)
 	prompt->envp = ft_env_cpy(envp);
 	while (1)
 	{
-		list = NULL;
+		prompt->cmds = NULL;
 		signal(SIGINT, ft_sighandle);
 		signal(SIGQUIT, SIG_IGN);
 		input = readline(shell_prompt);
@@ -38,20 +37,20 @@ int	main(int argc, char **argv, char **envp)
 		if (input[0] != '\0')
 		{
 			add_history(input);
-			list = NULL;
 			tmp = ft_cmdtrim(input, ' ');
 			ris = ft_cmdsubsplit(tmp);
 			ft_strtrim_all(ris);
-			ft_fill_struct(&list, ris, envp);
-			prompt->cmds = list;
-
+			ft_fill_struct(&prompt->cmds, ris, envp);
 			ft_execute(prompt);
 			ft_free(tmp);
 			ft_free(ris);
-			ft_free_list(list);
+			ft_free_list(prompt->cmds);
 		}
 		free(input);
 	}
+	rl_clear_history();
+	ft_free(prompt->envp);
+	free(prompt);
 	free(shell_prompt);
 	return 0;
 }
