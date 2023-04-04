@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/20 15:16:52 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/04 10:32:55 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 21:33:41 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,26 +76,17 @@ static int	ft_check_exists(t_prompt *prompt)
 char	**ft_env_add_var(t_prompt *prompt)
 {
 	char	**ris;
-	int		i;
 	int		index;
+	int		i;
 
 	if (ft_check_exists(prompt) == 0)
 	{
-		index = ft_strchr_index(((t_mini *)prompt->cmds->content)->full_cmd[1], '=');
-		if (index == -1 || ((t_mini *)prompt->cmds->content)->full_cmd[1][index + 1] == '\0')
+		index = ft_strchr_index((
+					(t_mini *)prompt->cmds->content)->full_cmd[1], '=');
+		if (index == -1 || ((t_mini *)prompt->cmds->content)
+			->full_cmd[1][index + 1] == '\0')
 			return (prompt->envp);
-		i = 0;
-		while (prompt->envp[i])
-			i++;
-		ris = (char **)malloc(sizeof(char *) * (i + 2));
-		i = 0;
-		while (prompt->envp[i])
-		{
-			ris[i] = ft_strdup(prompt->envp[i]);
-			i++;
-		}
-		ris[i] = ft_strdup(((t_mini *)prompt->cmds->content)->full_cmd[1]);
-		ris[++i] = 0;
+		ft_copy_add_envp(prompt->envp);
 		ft_free(prompt->envp);
 		return (ris);
 	}

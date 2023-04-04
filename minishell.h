@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:47:49 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/04 21:21:23 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 21:33:28 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ void	ft_execute(t_prompt *prompt);
 int		get_next_line(char **line);
 
 char	**ft_env_cpy(char **envp);
+char	**ft_copy_add_envp(t_prompt *prompt);
 
 void	ft_pwd(int in_fd);
 void	ft_cd(t_prompt *prompt);
