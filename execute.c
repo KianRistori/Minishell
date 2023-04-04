@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 12:18:24 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/04 11:51:11 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 14:36:30 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,54 +169,6 @@ static void ft_execute_commands(t_prompt *prompt)
 		cmds = cmds->next;
 	}
 	g_status = status;
-}
-
-
-static char	**ft_remove_char(char **cmd)
-{
-	char	**ris;
-	int	i;
-	int	k;
-
-	i = 0;
-	k = 0;
-	while (cmd[i])
-	{
-		if (!ft_strchr(cmd[i], '>') && !ft_strchr(cmd[i], '<'))
-			k++;
-		else
-		{
-			if (ft_strchr(cmd[i], '>') && ft_strchr(cmd[i + 1], '>'))
-				i++;
-			if (ft_strchr(cmd[i], '<') && ft_strchr(cmd[i + 1], '<'))
-				i++;
-			i++;
-		}
-		i++;
-	}
-	ris = (char **)malloc(sizeof(char *) * (k + 1));
-	i = 0;
-	k = 0;
-	while (cmd[i])
-	{
-		if (!ft_strchr(cmd[i], '>') && !ft_strchr(cmd[i], '<'))
-		{
-			ris[k] = ft_strdup(cmd[i]);
-			k++;
-		}
-		else
-		{
-			if (ft_strchr(cmd[i], '>') && ft_strchr(cmd[i + 1], '>'))
-				i++;
-			if (ft_strchr(cmd[i], '<') && ft_strchr(cmd[i + 1], '<'))
-				i++;
-			i++;
-		}
-		i++;
-	}
-	ft_free(cmd);
-	ris[k] = 0;
-	return (ris);
 }
 
 void	ft_execute(t_prompt *prompt)

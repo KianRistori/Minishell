@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 14:52:33 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/02 11:24:44 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 14:41:15 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,10 @@ char	*ft_strjoin(char *s1, char const *s2)
 	i = 0;
 	j = 0;
 	while (s1[i])
-	{
-		str[j++] = s1[i];
-		i++;
-	}
+		str[j++] = s1[i++];
 	i = 0;
 	while (s2[i])
-	{
-		str[j++] = s2[i];
-		i++;
-	}
+		str[j++] = s2[i++];
 	str[j] = '\0';
 	return (str);
 }

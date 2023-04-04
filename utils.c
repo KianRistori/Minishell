@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 12:02:42 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/29 12:41:05 by javellis         ###   ########.fr       */
+/*   Updated: 2023/04/04 14:22:08 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,31 +64,19 @@ char	*ft_strjoin2(char *s1, char *s2)
 	size_t	j;
 
 	if (s1 == NULL)
-	{
-		s1 = malloc(1);
-		s1[0] = '\0';
-	}
+		s1 = ft_calloc(1, 1);
 	if (s2 == NULL)
-	{
-		s2 = malloc(1);
-		s2[0] = '\0';
-	}
+		s2 = ft_calloc(1, 1);
 	str = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!str)
 		return (NULL);
 	i = 0;
 	j = 0;
 	while (s1[i])
-	{
-		str[j++] = s1[i];
-		i++;
-	}
+		str[j++] = s1[i++];
 	i = 0;
 	while (s2[i])
-	{
-		str[j++] = s2[i];
-		i++;
-	}
+		str[j++] = s2[i++];
 	str[j] = '\0';
 	free(s1);
 	return (str);

@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/04 11:16:34 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 14:44:44 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ static char	*ft_substitute(char *str)
 		else
 		{
 			tmp2 = ft_strdup(tmp);
+			free(tmp);
 			tmp = ft_strjoin2(ft_strdup("$"), tmp2);
 			free(tmp2);
 			tmp2 = ft_strdup(tmp);

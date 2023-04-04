@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 11:45:22 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/04 10:24:14 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 14:47:09 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ void	ft_cd(t_prompt *prompt)
 		buf = (char *)malloc(100 * sizeof(char));
 		getcwd(buf, 100);
 		path = ft_strjoin(buf, "/");
-		path = ft_strjoin(path, ((t_mini *)prompt->cmds->content)->full_cmd[1]);
+		path = ft_strjoin2(path,
+				((t_mini *)prompt->cmds->content)->full_cmd[1]);
 		chdir(path);
 		free(buf);
 		free(path);

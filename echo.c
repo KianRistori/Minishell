@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:03:21 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/04 11:20:51 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 14:45:08 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,9 @@ static void	ft_print_var(char *str, int in_fd, char **envp)
 
 	i = 0;
 	k = 0;
-	str = ft_strtrim(str, "\'");
-	str = ft_strtrim(str, "\"");
+	tmp = ft_strtrim(str, "\'");
+	str = ft_strtrim(tmp, "\"");
+	free(tmp);
 	while (str[i])
 	{
 		k = 0;
@@ -60,6 +61,7 @@ static void	ft_print_var(char *str, int in_fd, char **envp)
 				split = ft_split(envp[k], '=');
 				if (!ft_strcmp(split[0], var))
 					write(in_fd, split[1], ft_strlen(split[1]));
+				ft_free(split);
 				k++;
 			}
 			free(var);
@@ -69,7 +71,7 @@ static void	ft_print_var(char *str, int in_fd, char **envp)
 			break ;
 		i++;
 	}
-
+	free(str);
 }
 
 void	ft_echo(t_prompt *prompt, int in_fd)
