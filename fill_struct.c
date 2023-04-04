@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 15:00:15 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/03 15:43:38 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 11:49:43 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,12 @@ t_mini	*ft_fill_t_mini(char **cmd, char **envp, char **built_in)
 			j++;
 		}
 		if (ris->full_path == NULL)
-			ris->full_path = ft_path(cmd[i], envp);
+		{
+			if (!access(cmd[i], F_OK))
+				ris->full_path = ft_strdup(cmd[i]);
+			else
+				ris->full_path = ft_path(cmd[i], envp);
+		}
 		if (ft_strchr(cmd[i], '<') && ft_strchr(cmd[i + 1], '<'))
 		{
 			ris->here_doc = ft_strdup(cmd[i + 2]);

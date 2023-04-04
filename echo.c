@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:03:21 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/03 17:16:10 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 11:20:51 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,6 @@ static void	ft_print_var(char *str, int in_fd, char **envp)
 	k = 0;
 	str = ft_strtrim(str, "\'");
 	str = ft_strtrim(str, "\"");
-	int l = 0;
-	while (str[l])
-	{
-		printf("str[%d]: %c\n", l, str[l]);
-		l++;
-	}
 	while (str[i])
 	{
 		k = 0;
@@ -68,12 +62,12 @@ static void	ft_print_var(char *str, int in_fd, char **envp)
 					write(in_fd, split[1], ft_strlen(split[1]));
 				k++;
 			}
+			free(var);
 		}
 		i = j;
 		if (str[i] == '\0')
 			break ;
 		i++;
-		free(var);
 	}
 
 }

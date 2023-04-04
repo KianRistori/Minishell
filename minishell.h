@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:47:49 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/29 12:42:03 by javellis         ###   ########.fr       */
+/*   Updated: 2023/04/04 11:06:36 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ char	*ft_strjoin2(char *s1, char *s2);
 char	*ft_strtrim2(char *s1, char const *set);
 char	**ft_cmdtrim(char *str, char set);
 char	**ft_cmdsubsplit(char **cmd);
+char	*ft_get_shell_prompt(void);
 void	ft_strtrim_all(char **cmd);
 char	**ft_get_paths(char **envp);
 char	*ft_path(char *cmd, char **envp);

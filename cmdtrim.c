@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/03 17:18:51 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 11:16:34 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int	ft_pipecount(char **cmd)
 	int	ris;
 	int	i;
 	int	index;
+
 	ris = 0;
 	i = 0;
 	while (cmd[i])
@@ -229,6 +230,7 @@ char	**ft_cmdsubsplit(char **cmd)
 		flag = 0;
 	}
 	ris[k] = 0;
+	ft_free(cmd);
 	return (ris);
 }
 

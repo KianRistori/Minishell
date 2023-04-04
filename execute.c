@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 12:18:24 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/03 17:02:53 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 11:51:11 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,6 @@ static char	**ft_remove_char(char **cmd)
 		}
 		i++;
 	}
-	printf("k: %d, i: %d\n", k, i);
 	ris = (char **)malloc(sizeof(char *) * (k + 1));
 	i = 0;
 	k = 0;
@@ -215,7 +214,6 @@ static char	**ft_remove_char(char **cmd)
 		}
 		i++;
 	}
-	printf("k: %d, i: %d\n", k, i);
 	ft_free(cmd);
 	ris[k] = 0;
 	return (ris);

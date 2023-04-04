@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/20 15:16:52 by kristori          #+#    #+#             */
-/*   Updated: 2023/03/28 13:42:13 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 10:32:55 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ char	**ft_env_cpy(char **envp)
 
 static int	ft_check_exists(t_prompt *prompt)
 {
+	t_mini	*cmd;
 	int		i;
 	int		j;
 
@@ -53,11 +54,12 @@ static int	ft_check_exists(t_prompt *prompt)
 	j = 0;
 	while (prompt->envp[i])
 	{
-		if (prompt->envp[i][j] == ((t_mini *)prompt->cmds->content)->full_cmd[1][j])
+		cmd = ((t_mini *)prompt->cmds->content);
+		if (prompt->envp[i][j] == cmd->full_cmd[1][j])
 		{
-			if ((prompt->envp[i][j] == '=') && (((t_mini *)prompt->cmds->content)->full_cmd[1][j] == '='))
+			if ((prompt->envp[i][j] == '=') && cmd->full_cmd[1][j] == '=')
 			{
-				prompt->envp[i] = ft_strdup(((t_mini *)prompt->cmds->content)->full_cmd[1]);
+				prompt->envp[i] = ft_strdup(cmd->full_cmd[1]);
 				return (1);
 			}
 			j++;
@@ -114,7 +116,9 @@ char	**ft_env_remove_var(t_prompt *prompt)
 	i = 0;
 	while (prompt->envp[i])
 	{
-		if (ft_strncmp(prompt->envp[i], ((t_mini *)prompt->cmds->content)->full_cmd[1], ft_strlen(((t_mini *)prompt->cmds->content)->full_cmd[1]) - 1))
+		if (ft_strncmp(prompt->envp[i],
+				((t_mini *)prompt->cmds->content)->full_cmd[1],
+				ft_strlen(((t_mini *)prompt->cmds->content)->full_cmd[1]) - 1))
 		{
 			ris[j] = ft_strdup(prompt->envp[i]);
 			j++;
