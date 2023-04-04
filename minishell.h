@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:47:49 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/04 17:09:38 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/04 21:21:23 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ extern int	g_status;
 
 typedef struct s_data
 {
-	int	in_fd;
-	int	input_fd;
-	int	status;
-	pid_t pid;
+	int		in_fd;
+	int		input_fd;
+	int		status;
+	pid_t	pid;
 }		t_data;
 
 typedef struct s_prompt
@@ -91,11 +91,11 @@ char	**ft_remove_char(char **cmd);
 void	ft_execute_commands(t_prompt *prompt);
 void	ft_create_pipefd(t_list *cmds, int *pipefd);
 void	ft_redirect_input(t_prompt *prompt,
-	t_list *cmds, t_mini *cmd, int *pipefd);
+			t_list *cmds, t_mini *cmd, int *pipefd);
 void	ft_redirect_output(t_mini *cmd, t_data *data);
 void	ft_execute_parent_process(t_list *cmds,
-	t_data *data, pid_t pid, int *pipefd);
+			t_data *data, pid_t pid, int *pipefd);
 void	ft_execute_child_process(t_prompt *prompt,
-	t_list *cmds, t_data *data, int *pipefd);
+			t_list *cmds, t_data *data, int *pipefd);
 
 #endif
