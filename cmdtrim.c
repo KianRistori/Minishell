@@ -6,132 +6,64 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/05 10:31:17 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/05 12:21:10 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*ft_substitute(char *str)
+static void	ft_cmdsubsplit_state(char **ris, int *i, int *flag, char **cmd)
 {
-	char		*ris;
-	char		*tmp;
-	char		*tmp2;
-	static int	flag;
-	int			i;
-	int			j;
-	char		*env_var;
-
-	j = 1;
-	i = 0;
-	ris = NULL;
-	if (ft_strcmp(str, "$?") == 0)
-		return (ft_strdup(str));
-	if (!ft_strchr(str, '$'))
+	while (cmd[i[0]][i[1]])
 	{
-		while (str[i])
+		if (cmd[i[0]][i[1]] == 60 || cmd[i[0]][i[1]] == 62
+			|| cmd[i[0]][i[1]] == 124)
 		{
-			if (str[i] == '\'')
-				flag = !flag;
-			i++;
-		}
-		return (str);
-	}
-	i = 1;
-	while (str[i])
-	{
-		if (str[i] == '\'' || str[i] == '\"' || str[i] == ' ' || str[i] == '\0')
+			*flag = 1;
+			if (i[1] - 1 != -1)
+			{
+				if (cmd[i[0]][i[1] - 1] != 0 && cmd[i[0]][i[1] - 1] != ' ')
+					ris[i[2]++] = ft_strlcpy_quote(cmd[i[0]], i[1], 0);
+			}
+			ris[i[2]] = ft_strdup((char [2]){cmd[i[0]][i[1]], '\0'});
+			i[2]++;
+			if (cmd[i[0]][i[1] + 1] != 0)
+			{
+				ris[i[2]] = ft_strlcpy_quote(cmd[i[0]],
+						ft_strlen(cmd[i[0]]), i[1] + 1);
+				i[2]++;
+			}
 			break ;
-		if (str[i] == '\'')
-			flag = !flag;
-		i++;
-	}
-	if (flag == 0)
-	{
-		tmp = ft_strlcpy_quote(str, i, j);
-		env_var = getenv(tmp);
-		if (env_var)
-			ris = ft_strjoin2(ris, env_var);
-		else
-		{
-			tmp2 = ft_strdup(tmp);
-			free(tmp);
-			tmp = ft_strjoin2(ft_strdup("$"), tmp2);
-			free(tmp2);
-			tmp2 = ft_strdup(tmp);
-			ris = ft_strjoin2(ris, tmp2);
-			free(tmp2);
 		}
-		free(tmp);
+		i[1]++;
 	}
-	else
-	{
-		tmp = ft_strlcpy_quote(str, i, j - 1);
-		ris = ft_strjoin2(ris, tmp);
-		free(tmp);
-	}
-	j = i;
-	while (str[i])
-	{
-		if (str[i] == '\'')
-			flag = !flag;
-		i++;
-	}
-	tmp = ft_strlcpy_quote(str, i, j);
-	ris = ft_strjoin2(ris, tmp);
-	free(tmp);
-	return (ris);
 }
 
 char	**ft_cmdsubsplit(char **cmd)
 {
 	char	**ris;
 	int		flag;
-	int		i;
-	int		j;
-	int		k;
+	int		i[3];
 
 	flag = 0;
-	i = 0;
-	j = 0;
-	k = 0;
-	ris = (char **)malloc(sizeof(char *) * ((ft_countlist(cmd) + ft_pipecount(cmd) + 1)));
-	while (cmd[i])
+	i[0] = 0;
+	i[1] = 0;
+	i[2] = 0;
+	ris = (char **)malloc(sizeof(char *)
+			* ((ft_countlist(cmd) + ft_pipecount(cmd) + 1)));
+	while (cmd[i[0]])
 	{
-		while (cmd[i][j])
-		{
-			if (cmd[i][j] == 60 || cmd[i][j] == 62 || cmd[i][j] == 124)
-			{
-				flag = 1;
-				if (j - 1 != -1)
-				{
-					if (cmd[i][j - 1] != 0 && cmd[i][j - 1] != ' ')
-					{
-						ris[k] = ft_strlcpy_quote(cmd[i], j, 0);
-						k++;
-					}
-				}
-				ris[k] = ft_strdup((char [2]){cmd[i][j], '\0'});
-				k++;
-				if (cmd[i][j + 1] != 0)
-				{
-					ris[k] = ft_strlcpy_quote(cmd[i], ft_strlen(cmd[i]), j + 1);
-					k++;
-				}
-				break ;
-			}
-			j++;
-		}
+		ft_cmdsubsplit_state(ris, i, &flag, cmd);
 		if (flag == 0)
 		{
-			ris[k] = ft_strdup(cmd[i]);
-			k++;
+			ris[i[2]] = ft_strdup(cmd[i[0]]);
+			i[2]++;
 		}
-		i++;
-		j = 0;
+		i[0]++;
+		i[1] = 0;
 		flag = 0;
 	}
-	ris[k] = 0;
+	ris[i[2]] = 0;
 	ft_free(cmd);
 	return (ris);
 }
@@ -153,28 +85,26 @@ char	**ft_cmdtrim(char *str, char set)
 {
 	char	**ris;
 	int		flag[2];
-	int		i;
-	int		j;
-	int		k;
+	int		index[3];
 
-	i = 0;
-	j = 0;
-	k = 0;
+	index[0] = 0;
+	index[1] = 0;
+	index[2] = 0;
 	flag[0] = 0;
 	flag[1] = 0;
 	ris = (char **)malloc(sizeof(char *) * (ft_wordcount(str, set) + 1));
-	while (str[i] != '\0')
+	while (str[index[0]] != '\0')
 	{
-		if (!ft_check_quotes(str, flag, i) && str[i] == set)
+		if (!ft_check_quotes(str, flag, index[0]) && str[index[0]] == set)
 		{
-			ris[k] = ft_strlcpy_quote(str, i, j);
-			j = i;
-			k++;
+			ris[index[2]] = ft_strlcpy_quote(str, index[0], index[1]);
+			index[1] = index[0];
+			index[2]++;
 		}
-		i++;
+		index[0]++;
 	}
-	ris[k] = ft_strlcpy_quote(str, i, j);
-	ris[++k] = 0;
+	ris[index[2]] = ft_strlcpy_quote(str, index[0], index[1]);
+	ris[++index[2]] = 0;
 	ft_search_env(ris);
 	ft_expand_path(ris);
 	return (ris);

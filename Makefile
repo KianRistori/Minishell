@@ -1,6 +1,6 @@
 NAME = minishell
 SRC = main.c cmdtrim.c cmdtrim2.c utils.c free.c parsing.c fill_struct.c execute.c execute2.c execute3.c \
-	pwd.c env.c cd.c signal.c echo.c utils2.c fill_t_mini.c remove_char.c print_echo.c
+	pwd.c env.c cd.c signal.c echo.c utils2.c fill_t_mini.c remove_char.c print_echo.c substitute.c
 OBJ = $(SRC:.c=.o)
 
 LIBFT = @libft/Makefile
