@@ -6,64 +6,13 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:38:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/04 14:44:44 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/05 10:31:17 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	ft_wordcount(char *str, char set)
-{
-	int		ris;
-	int		flag[2];
-	int		i;
-
-	ris = 0;
-	i = 0;
-	flag[0] = 0;
-	flag[1] = 0;
-	while (str[i])
-	{
-		if (flag[0] == 0 && flag[1] == 0 && str[i] == set)
-			ris++;
-		if (str[i] == 34 && flag[0] == 1)
-			flag[0] = 0;
-		else if (str[i] == 34 && flag[0] == 0)
-			flag[0] = 1;
-		if (str[i] == 39 && flag[1] == 1)
-			flag[1] = 0;
-		else if (str[i] == 39 && flag[1] == 0)
-			flag[1] = 1;
-		i++;
-	}
-	return (ris + 1);
-}
-
-int	ft_pipecount(char **cmd)
-{
-	int	ris;
-	int	i;
-	int	index;
-
-	ris = 0;
-	i = 0;
-	while (cmd[i])
-	{
-		index = ft_strchr_index(cmd[i], 60);
-		if (index == -1)
-			index = ft_strchr_index(cmd[i], 62);
-		if (index == -1)
-			index = ft_strchr_index(cmd[i], 124);
-		if (index != -1 && (cmd[i][index + 1] != '\0' && index - 1 > 0))
-			ris += 2;
-		else if (index != -1 && (cmd[i][index + 1] != '\0' || index - 1 > 0))
-			ris++;
-		i++;
-	}
-	return (ris);
-}
-
-static char	*ft_substitute(char *str)
+char	*ft_substitute(char *str)
 {
 	char		*ris;
 	char		*tmp;
@@ -134,54 +83,6 @@ static char	*ft_substitute(char *str)
 	return (ris);
 }
 
-static void	ft_expand_path(char **cmd)
-{
-	char	*tmp;
-	int		i;
-
-	i = 0;
-	while (cmd[i])
-	{
-		if (ft_strchr(cmd[i], '~'))
-		{
-			tmp = ft_strtrim2(cmd[i], " ~");
-			cmd[i] = ft_strjoin(getenv("HOME"), tmp);
-			free(tmp);
-		}
-		i++;
-	}
-}
-
-static void	ft_search_env(char **cmd)
-{
-	char	**split;
-	char	*tmp;
-	int		i;
-	int		j;
-
-	i = 0;
-	j = 1;
-	while(cmd[i])
-	{
-		if (ft_strchr(cmd[i], '$'))
-		{
-			j = 1;
-			split = ft_split2(cmd[i], '$');
-			free(cmd[i]);
-			cmd[i] = ft_substitute(split[0]);
-			while (split[j])
-			{
-				tmp =  ft_substitute(split[j]);
-				cmd[i] = ft_strjoin(cmd[i], tmp);
-				free(tmp);
-				j++;
-			}
-			ft_free(split);
-		}
-		i++;
-	}
-}
-
 char	**ft_cmdsubsplit(char **cmd)
 {
 	char	**ris;
@@ -235,6 +136,19 @@ char	**ft_cmdsubsplit(char **cmd)
 	return (ris);
 }
 
+static int	ft_check_quotes(char *str, int *flags, int i)
+{
+	if (str[i] == 34 && flags[0] == 1)
+		flags[0] = 0;
+	else if (str[i] == 34 && flags[0] == 0)
+		flags[0] = 1;
+	if (str[i] == 39 && flags[1] == 1)
+		flags[1] = 0;
+	else if (str[i] == 39 && flags[1] == 0)
+		flags[1] = 1;
+	return (flags[0] || flags[1]);
+}
+
 char	**ft_cmdtrim(char *str, char set)
 {
 	char	**ris;
@@ -251,20 +165,12 @@ char	**ft_cmdtrim(char *str, char set)
 	ris = (char **)malloc(sizeof(char *) * (ft_wordcount(str, set) + 1));
 	while (str[i] != '\0')
 	{
-		if (flag[0] == 0 && flag[1] == 0 && str[i] == set)
+		if (!ft_check_quotes(str, flag, i) && str[i] == set)
 		{
 			ris[k] = ft_strlcpy_quote(str, i, j);
 			j = i;
 			k++;
 		}
-		if (str[i] == 34 && flag[0] == 1)
-			flag[0] = 0;
-		else if (str[i] == 34 && flag[0] == 0)
-			flag[0] = 1;
-		if (str[i] == 39 && flag[1] == 1)
-			flag[1] = 0;
-		else if (str[i] == 39 && flag[1] == 0)
-			flag[1] = 1;
 		i++;
 	}
 	ris[k] = ft_strlcpy_quote(str, i, j);
@@ -282,8 +188,6 @@ void	ft_strtrim_all(char **cmd)
 	while (cmd[i])
 	{
 		cmd[i] = ft_strtrim2(cmd[i], " ");
-		// cmd[i] = ft_strtrim2(cmd[i], "\'");
-		// cmd[i] = ft_strtrim2(cmd[i], "\"");
 		i++;
 	}
 }
