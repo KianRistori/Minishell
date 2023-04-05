@@ -3,117 +3,70 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
+/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:03:21 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/04 14:45:08 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/05 10:50:55 by javellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	ft_print_var(char *str, int in_fd, char **envp)
+static void	ft_set_flags(t_prompt *prompt, int in_fd, int *i, int *flag)
 {
-	char	**split;
-	char	*var;
-	char	*tmp;
-	int	i;
-	int	j;
-	int k;
-
-	i = 0;
-	k = 0;
-	tmp = ft_strtrim(str, "\'");
-	str = ft_strtrim(tmp, "\"");
-	free(tmp);
-	while (str[i])
+	while (((t_mini *)prompt->cmds->content)->full_cmd[i[0]][i[1]])
 	{
-		k = 0;
-		while (str[i] && str[i] != '$')
+		if (((t_mini *)prompt->cmds->content)->full_cmd[i[0]][i[1]] == '\'')
+			flag[0] = !flag[0];
+		if (((t_mini *)prompt->cmds->content)->full_cmd[i[0]][i[1]] == '-'
+			&& ((t_mini *)prompt->cmds->content)
+				->full_cmd[i[0]][i[1] + 1] == 'n')
 		{
-			write(in_fd, &str[i], 1);
-			i++;
+			flag[1] = 1;
+			i[1]++;
 		}
-		j = i;
-		if (str[j + 1] == '?')
-		{
-			tmp = ft_itoa(g_status);
-			write(in_fd, tmp, ft_strlen(tmp));
-			free(tmp);
-			j++;
-		}
-		else
-		{
-			while (str[j] && str[j] != ' ' && str[j] != '\'' && str[j] != '\"')
-			{
-				j++;
-				if (str[j] && str[j + 1] == '$')
-				{
-					break;
-				}
-			}
-			if ((int)ft_strlen(str) == j)
-				var = ft_strlcpy_quote(str, j, i + 1);
-			else
-				var = ft_strlcpy_quote(str, j + 1, i + 1);
-			while (envp[k])
-			{
-				split = ft_split(envp[k], '=');
-				if (!ft_strcmp(split[0], var))
-					write(in_fd, split[1], ft_strlen(split[1]));
-				ft_free(split);
-				k++;
-			}
-			free(var);
-		}
-		i = j;
-		if (str[i] == '\0')
-			break ;
-		i++;
+		else if (((t_mini *)prompt->cmds->content)->full_cmd[i[0]][i[1]] != '\''
+			&& ((t_mini *)prompt->cmds->content)->full_cmd[i[0]][i[1]] != '\"')
+			write(in_fd, &((t_mini *)prompt->cmds->content)
+				->full_cmd[i[0]][i[1]], 1);
+		i[1]++;
 	}
-	free(str);
+}
+
+static void	ft_print_spaces(t_prompt *prompt, int *i, int in_fd)
+{
+	if (((t_mini *)prompt->cmds->content)->full_cmd[i[0]] != 0)
+	{
+		if (((t_mini *)prompt->cmds->content)->full_cmd[i[0]][0] != 0
+			&& ((t_mini *)prompt->cmds->content)->full_cmd[i[0] + 1] != 0
+				&& ft_strncmp(((t_mini *)prompt->cmds->content)
+					->full_cmd[i[0]], "-n", 2))
+			write(in_fd, " ", 1);
+	}
 }
 
 void	ft_echo(t_prompt *prompt, int in_fd)
 {
-	int		i;
-	int		j;
-	int		option;
-	int		flag;
+	int		i[2];
+	int		flag[2];
 
-	flag = 0;
-	i = 1;
-	option = 0;
-	while (((t_mini *)prompt->cmds->content)->full_cmd[i])
+	flag[0] = 0;
+	i[0] = 1;
+	flag[1] = 0;
+	while (((t_mini *)prompt->cmds->content)->full_cmd[i[0]])
 	{
-		j = 0;
-		if (ft_strchr(((t_mini *)prompt->cmds->content)->full_cmd[i], '$') && !ft_strchr(((t_mini *)prompt->cmds->content)->full_cmd[i], '\'') && !flag)
-			ft_print_var(((t_mini *)prompt->cmds->content)->full_cmd[i], in_fd, prompt->envp);
+		i[1] = 0;
+		if (ft_strchr(((t_mini *)prompt->cmds->content)->full_cmd[i[0]], '$')
+			&& !ft_strchr(((t_mini *)prompt->cmds->content)
+				->full_cmd[i[0]], '\'') && !flag[0])
+			ft_print_var(((t_mini *)prompt->cmds->content)
+				->full_cmd[i[0]], in_fd, prompt->envp);
 		else
-		{
-			while (((t_mini *)prompt->cmds->content)->full_cmd[i][j])
-			{
-				if (((t_mini *)prompt->cmds->content)->full_cmd[i][j] == '\'')
-					flag = !flag;
-				if (((t_mini *)prompt->cmds->content)->full_cmd[i][j] == '-' && ((t_mini *)prompt->cmds->content)->full_cmd[i][j + 1] == 'n')
-				{
-					option = 1;
-					j++;
-				}
-				else if(((t_mini *)prompt->cmds->content)->full_cmd[i][j] != '\'' && ((t_mini *)prompt->cmds->content)->full_cmd[i][j] != '\"')
-					write(in_fd, &((t_mini *)prompt->cmds->content)->full_cmd[i][j], 1);
-				j++;
-			}
-		}
-		if (((t_mini *)prompt->cmds->content)->full_cmd[i] == 0)
-		{
-			if (((t_mini *)prompt->cmds->content)->full_cmd[i][0] != 0 && ((t_mini *)prompt->cmds->content)->full_cmd[i + 1] != 0
-					&& ft_strncmp(((t_mini *)prompt->cmds->content)->full_cmd[i], "-n", 2))
-				write(in_fd, " ", 1);
-		}
-		i++;
+			ft_set_flags(prompt, in_fd, i, flag);
+		ft_print_spaces(prompt, i, in_fd);
+		i[0]++;
 	}
-	if (option)
+	if (flag[1])
 		write(in_fd, "%%", 1);
 	write(in_fd, "\n", 1);
 }

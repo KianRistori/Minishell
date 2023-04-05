@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
+/*   By: javellis <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:47:49 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/05 10:16:26 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/05 10:47:16 by javellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,5 +103,8 @@ void	ft_execute_parent_process(t_list *cmds,
 			t_data *data, pid_t pid, int *pipefd);
 void	ft_execute_child_process(t_prompt *prompt,
 			t_list *cmds, t_data *data, int *pipefd);
+void	ft_print_exported_var(char *str, int in_fd, char **envp, int *i);
+void	ft_print_status(char *tmp, int in_fd, int *i);
+void	ft_print_var(char *str, int in_fd, char **envp);
 
 #endif
