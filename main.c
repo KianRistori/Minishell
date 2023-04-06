@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:48:47 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/04 11:50:27 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/05 12:43:38 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	ft_loop(t_prompt *prompt, char *shell_prompt)
 		signal(SIGINT, ft_sighandle);
 		signal(SIGQUIT, SIG_IGN);
 		input = readline(shell_prompt);
-		if (!input)
+		if (!input || ft_strncmp(input, "exit", 4) == 0)
 			break ;
 		if (input[0] != '\0')
 		{

@@ -6,7 +6,7 @@
 /*   By: kristori <kristori@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 10:12:28 by kristori          #+#    #+#             */
-/*   Updated: 2023/04/05 11:01:02 by kristori         ###   ########.fr       */
+/*   Updated: 2023/04/05 14:56:04 by kristori         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,11 @@ void	ft_search_env(char **cmd)
 			while (split[j])
 			{
 				tmp = ft_substitute(split[j]);
-				cmd[i] = ft_strjoin(cmd[i], tmp);
+				cmd[i] = ft_strjoin2(cmd[i], tmp);
 				free(tmp);
-				j++;
+				free(split[j++]);
 			}
-			ft_free(split);
+			free(split);
 		}
 		i++;
 	}
